@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЛР №4 — Ресивер · Теория для сдачи</title>
+<style>
+:root {
+  --bg:        #f4f6f7;
+  --card:      #ffffff;
+  --ink:       #2c3e50;
+  --ink-soft:  #556570;
+  --muted:     #8a9aa5;
+  --accent:    #16a085;
+  --accent-2:  #1abc9c;
+  --accent-bg: #e8f8f5;
+  --danger:    #e74c3c;
+  --danger-bg: #fdedec;
+  --warn:      #f39c12;
+  --warn-bg:   #fef5e7;
+  --code-bg:   #1e2a35;
+  --code-ink:  #e8f1f5;
+  --border:    #e4eaed;
+  --kw:        #c792ea;
+  --str:       #a5e075;
+  --cm:        #7d8b95;
+  --ty:        #82aaff;
+  --num:       #f78c6c;
+  --radius:    14px;
+  --shadow:    0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(28,64,80,.06);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================== HERO ===================== */
+.hero {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #1abc9c 160%);
+  color: #fff;
+  padding: 64px 24px 56px;
+  text-align: center;
+}
+.hero .kicker {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 12px;
+  opacity: .7;
+  margin-bottom: 14px;
+}
+.hero h1 {
+  font-size: 44px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  line-height: 1.1;
+}
+.hero p {
+  font-size: 17px;
+  opacity: .85;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.hero .badge {
+  display: inline-block;
+  margin-top: 22px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.25);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: .3px;
+}
+
+/* ===================== LAYOUT ===================== */
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ===================== TOC ===================== */
+.toc {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 30px;
+  margin: -32px auto 40px;
+  position: relative;
+  max-width: 932px;
+}
+.toc h2 {
+  margin: 0 0 16px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 32px;
+}
+.toc li { margin: 6px 0; break-inside: avoid; }
+.toc a {
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 15px;
+  display: flex;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px dashed transparent;
+  transition: .15s;
+}
+.toc a:hover { color: var(--accent); border-bottom-color: var(--accent-2); }
+.toc .n {
+  color: var(--accent);
+  font-weight: 700;
+  min-width: 22px;
+}
+
+/* ===================== SECTIONS ===================== */
+section {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 36px 40px;
+  margin-bottom: 28px;
+}
+@media (max-width: 640px) {
+  section { padding: 26px 22px; }
+  .hero h1 { font-size: 32px; }
+  .toc ol { columns: 1; }
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+h2 .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 17px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+h3 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 28px 0 10px;
+  color: var(--ink);
+}
+h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 20px 0 8px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+p { margin: 10px 0; color: var(--ink); }
+.lead { color: var(--ink-soft); font-size: 17px; margin-bottom: 20px; }
+ul, ol { padding-left: 22px; }
+li { margin: 6px 0; }
+strong { color: var(--ink); }
+
+/* ===================== INLINE CODE ===================== */
+code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: .9em;
+  background: #eef2f4;
+  color: #b1304a;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid #e3e9ec;
+}
+
+/* ===================== CODE BLOCKS ===================== */
+pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 20px 22px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 16px 0;
+  position: relative;
+  border: 1px solid #2c3e50;
+}
+pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+}
+pre .lang {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 10px;
+  color: #7d8b95;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: "Segoe UI", sans-serif;
+}
+.kw  { color: var(--kw); }
+.str { color: var(--str); }
+.cm  { color: var(--cm); font-style: italic; }
+.ty  { color: var(--ty); }
+.num { color: var(--num); }
+.fn  { color: #ffcb6b; }
+
+/* ===================== CALLOUTS ===================== */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin: 18px 0;
+  border-left: 4px solid;
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+.callout .ico {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.callout .body { flex: 1; }
+.callout .body p:first-child { margin-top: 0; }
+.callout .body p:last-child  { margin-bottom: 0; }
+.callout.warn   { background: var(--warn-bg);   border-color: var(--warn);   }
+.callout.danger { background: var(--danger-bg); border-color: var(--danger); }
+.callout.note   { background: #eef2f4;          border-color: var(--ink-soft); }
+
+/* ===================== TABLES ===================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 14.5px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--border);
+}
+th, td {
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+th {
+  background: #f7f9fa;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+tr:last-child td { border-bottom: 0; }
+tr:nth-child(even) td { background: #fbfcfd; }
+
+/* ===================== ANALOGY ===================== */
+.analogy {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 18px 0;
+}
+.analogy .box {
+  background: #f8fafb;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.analogy .box .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.analogy .box p { margin: 0; font-size: 14.5px; }
+@media (max-width: 640px) { .analogy { grid-template-columns: 1fr; } }
+
+/* ===================== QA ===================== */
+.qa-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.qa {
+  background: #f8fafb;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+}
+.qa summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 18px;
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  transition: background .15s;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::before {
+  content: "?";
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.qa summary:hover { background: #eef4f6; }
+.qa[open] summary { background: var(--accent-bg); }
+.qa .answer {
+  padding: 0 18px 16px 52px;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+.qa .answer p { margin: 6px 0; }
+
+/* ===================== BADGE ===================== */
+.tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--accent-bg);
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+/* ===================== FOOTER ===================== */
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 20px 0 40px;
+}
+
+/* ===================== BACK TO TOP ===================== */
+.top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 6px 20px rgba(22,160,133,.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+}
+.top.show { opacity: 1; pointer-events: auto; }
+.top:hover { transform: translateY(-2px); }
+
+/* ===================== PRINT ===================== */
+@media print {
+  body { background: #fff; font-size: 11pt; }
+  .hero { background: #fff !important; color: #000; padding: 20px 0; text-align: left; }
+  .hero h1 { font-size: 26pt; }
+  .hero .badge { display: none; }
+  .toc { box-shadow: none; border: 1px solid #ccc; margin: 10px 0; }
+  section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; margin-bottom: 12px; padding: 16px; }
+  pre { background: #f4f4f4 !important; color: #000 !important; border: 1px solid #ccc; }
+  .kw, .str, .cm, .ty, .num, .fn { color: #000 !important; }
+  .top { display: none; }
+  .qa { border-color: #ccc; }
+  .qa[open] summary, .qa summary { background: #fff !important; }
+  a { color: #000 !important; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Лабораторная работа №4</div>
+  <h1>Ресивер — теория для сдачи</h1>
+  <p>Всё, что нужно знать, чтобы сдать защиту: простыми словами, с примерами кода и ответами на вопросы.</p>
+  <div class="badge">RadioButton · NumericUpDown · FormOutStr · ShowDialog · try/catch · Отладка</div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>Содержание</h2>
+    <ol>
+      <li><a href="#s0"><span class="n">0</span>Что мы вообще делали</a></li>
+      <li><a href="#s1"><span class="n">1</span>RadioButton и Panel</a></li>
+      <li><a href="#s2"><span class="n">2</span>NumericUpDown</a></li>
+      <li><a href="#s3"><span class="n">3</span>Свой класс FormOutStr</a></li>
+      <li><a href="#s4"><span class="n">4</span>Вторая форма и модальность</a></li>
+      <li><a href="#s5"><span class="n">5</span>try / catch</a></li>
+      <li><a href="#s6"><span class="n">6</span>Отладка (F9, F10, F11)</a></li>
+      <li><a href="#s7"><span class="n">7</span>Как всё работает вместе</a></li>
+      <li><a href="#s8"><span class="n">8</span>Вопросы на защите</a></li>
+      <li><a href="#s9"><span class="n">9</span>Три умные фразы</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============ 0 ============ -->
+  <section id="s0">
+    <h2><span class="num">0</span>Что мы вообще делали</h2>
+    <p class="lead">В лабе 3 была программа «Ресивер» — считает массу газа. В лабе 4 мы её <strong>улучшили</strong>: добавили выбор газа, удобные поля для чисел, красивый вывод, второе окошко и защиту от ошибок.</p>
+    <p>Зачем всё это? Чтобы программой было <strong>удобно пользоваться</strong> и чтобы она <strong>не падала</strong>, что бы пользователь ни ввёл. Всё остальное — инструменты для этого.</p>
+
+    <table>
+      <tr><th>Что добавили</th><th>Зачем</th></tr>
+      <tr><td>RadioButton для газа</td><td>Выбрать воздух / азот / CO₂ — у каждого своя газовая постоянная R</td></tr>
+      <tr><td>NumericUpDown</td><td>Поле для чисел со стрелочками: буквы ввести нельзя</td></tr>
+      <tr><td>Класс FormOutStr</td><td>Красивый вывод чисел (4 знака после запятой)</td></tr>
+      <tr><td>Form2 (модальная)</td><td>Отдельное окошко для смены объёма ресивера</td></tr>
+      <tr><td>try / catch</td><td>Программа не падает при ошибке — показывает сообщение</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ 1 ============ -->
+  <section id="s1">
+    <h2><span class="num">1</span>RadioButton и Panel</h2>
+
+    <h3>Что такое RadioButton</h3>
+    <p>Обычная кнопка-кружок. Нажимаешь — внутри появляется точка. Нажимаешь <strong>другую</strong> кнопку в той же компании — <strong>первая сама гаснет</strong>.</p>
+
+    <div class="analogy">
+      <div class="box">
+        <div class="label">RadioButton</div>
+        <p>Как вопрос «пол: мужской / женский» — выбрать можно <strong>только один</strong>. Нажал «женский» — «мужской» сам выключился.</p>
+      </div>
+      <div class="box">
+        <div class="label">CheckBox (для сравнения)</div>
+        <p>Как «отметьте, чем болели» — можно наставить <strong>сколько угодно</strong> галочек.</p>
+      </div>
+    </div>
+
+    <p>У нас выбирается <strong>один газ</strong> из трёх — значит, RadioButton.</p>
+
+    <h3>Как программа понимает, какая нажата</h3>
+    <p>У каждой кнопки есть свойство <code>Checked</code> — «включена или нет» (<code>true</code> / <code>false</code>).</p>
+
+    <pre><span class="lang">csharp</span><code><span class="kw">if</span> (radButtonAir.Checked)  <span class="kw">return</span> <span class="num">287</span>;  <span class="cm">// воздух</span>
+<span class="kw">if</span> (radButtonAzot.Checked) <span class="kw">return</span> <span class="num">297</span>;  <span class="cm">// азот</span>
+<span class="kw">if</span> (radButtonCO2.Checked)  <span class="kw">return</span> <span class="num">189</span>;  <span class="cm">// углекислый газ</span></code></pre>
+
+    <h3>Зачем Panel — «коробка для кнопок»</h3>
+    <p>Представь, что на форме <strong>две группы</strong> кнопок: «газ» (3 кнопки) и «тип ресивера» (2 кнопки). Если все они лежат просто на форме — программа запутается:</p>
+
+    <div class="callout danger">
+      <div class="ico">✗</div>
+      <div class="body">
+        <p><strong>Без Panel:</strong> выбрал газ «воздух» — и тип ресивера <strong>сам выключился</strong>, хотя это про другое. Программа считает, что все радиокнопки на форме — <strong>одна компания</strong>, и включён может быть только один.</p>
+      </div>
+    </div>
+
+    <p><strong>Решение — <code>Panel</code>.</strong> Это белая коробка на форме. Всё, что внутри одной коробки — «одна компания». Внутри — включён только один. <strong>Разные коробки друг на друга не влияют.</strong></p>
+
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body">
+        <p><strong>У нас:</strong> одна <code>Panel</code> с тремя кнопками газа. Просто и аккуратно. Если завтра понадобится вторая группа — её кладут в отдельную панель.</p>
+      </div>
+    </div>
+
+    <h3>Фраза для сдачи</h3>
+    <div class="callout note">
+      <div class="ico">💬</div>
+      <div class="body">
+        <p>«<code>Panel</code> — это коробка для радиокнопок. Внутри коробки включён только один. Разные коробки не влияют друг на друга. У меня три кнопки газа — в одной коробке, потому что это один вопрос».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2 ============ -->
+  <section id="s2">
+    <h2><span class="num">2</span>NumericUpDown — умное поле для чисел</h2>
+
+    <p>Поле с числом и двумя стрелочками вверх-вниз. Кликаешь стрелку — число меняется. Можно ввести с клавиатуры.</p>
+
+    <pre><span class="lang">text</span><code>[   10,5   ][▲][▼]</code></pre>
+
+    <h3>Чем лучше обычного текстового поля</h3>
+    <p>В лабе 3 мы брали обычное поле и <strong>писали кучу кода</strong>, чтобы туда нельзя было ввести букву. В лабе 4 мы это выкинули — <strong>NumericUpDown сам не даёт ввести буквы</strong>. И сам держит число в границах:</p>
+
+    <table>
+      <tr><th>Свойство</th><th>Что делает</th></tr>
+      <tr><td><code>Minimum</code> / <code>Maximum</code></td><td>нижняя и верхняя граница (например, давление от −1 до 10000)</td></tr>
+      <tr><td><code>DecimalPlaces</code></td><td>сколько знаков после запятой разрешено</td></tr>
+      <tr><td><code>Increment</code></td><td>на сколько меняется при клике по стрелке</td></tr>
+      <tr><td><code>Value</code></td><td>текущее значение</td></tr>
+    </table>
+
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body">
+        <p><strong>Кучу кода из лабы 3 удалили</strong> — контрол делает всё сам. Это и есть смысл готовых компонентов: не писать то, что уже написано.</p>
+      </div>
+    </div>
+
+    <h3>Одна хитрость — тип decimal</h3>
+    <p>У <code>NumericUpDown</code> значение хранится в типе <strong><code>decimal</code></strong> (точный тип для денег и чисел). А наша формула работает с <strong><code>double</code></strong> (обычный тип для вычислений). C# не даёт их перепутать — нужно <strong>явно превратить</strong> одно в другое:</p>
+
+    <pre><span class="lang">csharp</span><code><span class="ty">double</span> p = (<span class="ty">double</span>)Pressure.Value;   <span class="cm">// ← скобки (double) обязательны</span></code></pre>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body">
+        <p><strong>Спросят «Зачем <code>(double)</code>?»</strong> — «<code>Value</code> — тип <code>decimal</code>, а формула на <code>double</code>. Нужно явное превращение».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 ============ -->
+  <section id="s3">
+    <h2><span class="num">3</span>Свой класс FormOutStr</h2>
+
+    <h3>Проблема</h3>
+    <p>Программа посчитала массу: <code>10,7977123456...</code> — длиннющее число. Показывать такое некрасиво. Хочется: <code>10,7977</code> (4 знака).</p>
+
+    <h3>Простое решение</h3>
+    <pre><span class="lang">csharp</span><code>Massa.Text = m.ToString(<span class="str">"F4"</span>) + <span class="str">" кг"</span>;</code></pre>
+    <p>Это правильно. <strong>Но в лабе требуют отдельный класс</strong> — и вот зачем.</p>
+
+    <h3>Смысл класса на пальцах</h3>
+    <p>Представь, что у тебя <strong>десять</strong> программ, и везде надо красиво выводить числа. Писать одно и то же в десяти местах — глупо. А если завтра надо поменять «4 знака» на «6 знаков» — править в десяти местах.</p>
+
+    <p><strong>Решение:</strong> один раз написать «коробочку с кнопкой». Снаружи — одна кнопка «сделай красиво», внутри — вся логика. Это называется <strong>инкапсуляция</strong> — «сложное спрятать в коробку, снаружи дать простое».</p>
+
+    <p>Коробка — класс <code>FormOutStr</code>. Кнопка на коробке — метод <code>ToStr</code>:</p>
+
+    <pre><span class="lang">csharp</span><code><span class="kw">public</span> <span class="kw">class</span> <span class="ty">FormOutStr</span>
+{
+    <span class="kw">public</span> <span class="ty">string</span> <span class="fn">ToStr</span>(<span class="ty">string</span> s, <span class="ty">int</span> n)   <span class="cm">// s — число строкой, n — сколько знаков оставить</span>
+    {
+        <span class="cm">// превратить строку в число, округлить, вернуть обратно строкой</span>
+    }
+}</code></pre>
+
+    <p>Использование:</p>
+    <pre><span class="lang">csharp</span><code><span class="ty">FormOutStr</span> formatter = <span class="kw">new</span> <span class="ty">FormOutStr</span>();   <span class="cm">// сделали коробку</span>
+Massa.Text = formatter.<span class="fn">ToStr</span>(raw, <span class="num">4</span>);      <span class="cm">// нажали кнопку «сделай красиво»</span></code></pre>
+
+    <h3>Почему у нас лучше, чем в методичке</h3>
+    <p>В методичке метод такой:</p>
+    <pre><span class="lang">csharp</span><code>str = s.<span class="fn">Remove</span>(i + n + <span class="num">1</span>);   <span class="cm">// отрезать всё после n знаков</span></code></pre>
+
+    <div class="callout danger">
+      <div class="ico">✗</div>
+      <div class="body">
+        <p>Если в строке <strong>меньше</strong> символов, чем надо отрезать — программа <strong>падает с ошибкой</strong>. Например, число <code>5</code> (строка «5», запятой нет) — и всё ломается.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body">
+        <p><strong>У нас</strong> метод защищён: сначала проверяем «это точно число?», потом красиво округляем. <strong>Это плюс на защите</strong> — «я исправил ошибку из методички».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4 ============ -->
+  <section id="s4">
+    <h2><span class="num">4</span>Вторая форма и «модальность»</h2>
+
+    <h3>Что такое «вторая форма»</h3>
+    <p>Программа — это не обязательно одно окно. Может быть <strong>главное окно</strong> и куча <strong>дополнительных</strong>: настройки, «о программе», «сохранить файл». Каждое окно — свой класс.</p>
+    <p>У нас: <strong>Form1</strong> — главное окно (расчёт), <strong>Form2</strong> — маленькое окошко для ввода объёма.</p>
+
+    <h3>Как открыть второе окно — два способа</h3>
+    <table>
+      <tr><th>Способ</th><th>Название</th><th>Что происходит</th></tr>
+      <tr><td><code>form2.Show()</code></td><td><strong>Немодальное</strong></td><td>окно открылось, но главное <strong>тоже работает</strong> — можно кликать и там, и там</td></tr>
+      <tr><td><code>form2.ShowDialog()</code></td><td><strong>Модальное</strong></td><td>пока не закроешь маленькое окно — главное <strong>заморожено</strong></td></tr>
+    </table>
+
+    <div class="analogy">
+      <div class="box">
+        <div class="label">Модальное — касса</div>
+        <p>Как касса в магазине. Пока не расплатишься — дальше не пройдёшь.</p>
+      </div>
+      <div class="box">
+        <div class="label">Немодальное — вкладка</div>
+        <p>Как вкладка в браузере. Открыл — а другие вкладки работают.</p>
+      </div>
+    </div>
+
+    <p><strong>Когда что:</strong></p>
+    <ul>
+      <li><strong>Диалог ввода</strong> («введите объём») → <strong>модальное</strong>. Пользователь сначала отвечает, потом программа идёт дальше.</li>
+      <li><strong>Справка, «о программе»</strong> → <strong>немодальное</strong>. Пусть висит сбоку, не мешает.</li>
+    </ul>
+    <p>У нас модальное — потому что надо <strong>дождаться</strong> объёма от пользователя, прежде чем считать.</p>
+
+    <h3>Как понять — нажали ОК или Отмена</h3>
+    <p>После закрытия модального окна главному надо узнать: <strong>принять</strong> ответ или <strong>отменить</strong>?</p>
+    <p>Для этого у каждой кнопки есть свойство <strong><code>DialogResult</code></strong>:</p>
+    <ul>
+      <li><code>DialogResult = OK</code> — пользователь согласился;</li>
+      <li><code>DialogResult = Cancel</code> — отказался.</li>
+    </ul>
+    <p>Пользователь кликнул такую кнопку → окно само закрылось → главное окно <strong>спрашивает</strong>:</p>
+
+    <pre><span class="lang">csharp</span><code><span class="kw">if</span> (formVolume.<span class="fn">ShowDialog</span>(<span class="kw">this</span>) != <span class="ty">DialogResult</span>.OK)
+    <span class="kw">return</span>;   <span class="cm">// нажали «Отмена» — ничего не меняем</span></code></pre>
+
+    <p>Читается так: «открыл окошко, дождался закрытия. Если закрыли <strong>не</strong> через OK — выхожу, объём не трогаю».</p>
+
+    <h3>Зачем public у поля Volume</h3>
+    <p><code>Form1</code> хочет прочитать, что пользователь ввёл в поле <code>Volume</code> в <code>Form2</code>. Но по умолчанию поле <strong>спрятано</strong> от других классов — <code>private</code>, снаружи не видно. Мы <strong>явно разрешаем</strong> показывать его:</p>
+
+    <pre><span class="lang">csharp</span><code><span class="kw">public</span> <span class="ty">TextBox</span> Volume;   <span class="cm">// в Form2.Designer.cs</span></code></pre>
+
+    <p>Теперь <code>Form1</code> может написать:</p>
+    <pre><span class="lang">csharp</span><code><span class="ty">double</span> newV = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(formVolume.Volume.Text);</code></pre>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body">
+        <p><strong>Спросят «Почему <code>public</code>?»</strong> — «По заданию лабы нужно читать поле из главной формы; чтобы было видно снаружи — делаем <code>public</code>».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5 ============ -->
+  <section id="s5">
+    <h2><span class="num">5</span>try / catch — «попробуй / поймай»</h2>
+
+    <h3>Проблема</h3>
+    <p>В программе есть места, где может случиться «бум»:</p>
+    <ul>
+      <li>деление на ноль;</li>
+      <li>пользователь ввёл букву вместо числа — превращение в число <strong>падает</strong>;</li>
+      <li>вылезли за границу массива.</li>
+    </ul>
+    <p>Если это не поймать — программа <strong>закроется с ошибкой</strong>. Преподаватель такое не любит.</p>
+
+    <h3>Решение — «попробуй / поймай»</h3>
+    <pre><span class="lang">csharp</span><code><span class="kw">try</span>
+{
+    <span class="cm">// тут код, который МОЖЕТ упасть</span>
+    <span class="ty">double</span> m = (p + <span class="num">1</span>) * <span class="num">98000</span> * V / (R * (T + <span class="num">273</span>));
+}
+<span class="kw">catch</span> (<span class="ty">DivideByZeroException</span>)
+{
+    <span class="cm">// сюда попадаем ТОЛЬКО если было деление на ноль</span>
+    <span class="ty">MessageBox</span>.<span class="fn">Show</span>(<span class="str">"Температура не может быть равна −273 °C"</span>);
+}</code></pre>
+
+    <h4>Как это работает</h4>
+    <ol>
+      <li>Программа заходит в блок <code>try</code> и выполняет код.</li>
+      <li>Всё ок — блок <code>catch</code> <strong>пропускается</strong>, работа идёт дальше.</li>
+      <li>Что-то упало внутри <code>try</code> — программа <strong>не закрывается</strong>, а ищет подходящий <code>catch</code>.</li>
+      <li>Нашла — выполнила, что там написано, и <strong>работает дальше</strong>.</li>
+      <li>Не нашла — увы, падает как обычно.</li>
+    </ol>
+
+    <h3>Почему у нас два catch</h3>
+    <p>В <code>try</code> у нас весь расчёт. Там может упасть:</p>
+    <ul>
+      <li><strong>деление на ноль</strong> — если температура ровно −273;</li>
+      <li><strong>что-то ещё</strong> — например, ошибка превращения строки в число.</li>
+    </ul>
+    <p>Поэтому <strong>сначала</strong> ловим конкретно деление на ноль (у него своё понятное сообщение), <strong>потом</strong> — всё остальное:</p>
+
+    <pre><span class="lang">csharp</span><code><span class="kw">try</span> { ... }
+<span class="kw">catch</span> (<span class="ty">DivideByZeroException</span> ex) { <span class="cm">/* конкретно про ноль */</span> }
+<span class="kw">catch</span> (<span class="ty">Exception</span> ex)             { <span class="cm">/* всё остальное */</span> }</code></pre>
+
+    <div class="callout danger">
+      <div class="ico">!</div>
+      <div class="body">
+        <p><strong>Важно: порядок!</strong> <code>Exception</code> — это «родитель» всех ошибок. Если поставить его <strong>первым</strong> — он перехватит <strong>всё</strong>, и до второго <code>catch</code> дело не дойдёт. Правило простое: <strong>сначала конкретное, потом общее</strong>.</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body">
+        <p><strong>Спросят «Почему два <code>catch</code>?»</strong> — «Для деления на ноль хочу отдельное понятное сообщение, для остальных — общее. Сначала ловлю конкретную ошибку, потом общую. <code>Exception</code> — родитель всех, поэтому идёт последним».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 ============ -->
+  <section id="s6">
+    <h2><span class="num">6</span>Отладка — F9, F10, F11</h2>
+
+    <h3>Точка останова (breakpoint) — «стоп-кран»</h3>
+    <p>Представь: программа выдаёт неправильный результат. Где ошибка? В каком месте? Глазами не видно. Тогда ставим «стоп-кран».</p>
+    <ul>
+      <li>Кликаешь <strong>слева от строки кода</strong> или нажимаешь <kbd>F9</kbd> — появляется <strong>красный кружок</strong>.</li>
+      <li>Запускаешь программу <kbd>F5</kbd> — она <strong>останавливается</strong> ровно на этой строке. Дальше не идёт, пока не разрешишь.</li>
+    </ul>
+
+    <h3>Зачем это нужно</h3>
+    <p>Пока программа «стоит» на точке, можно:</p>
+    <ul>
+      <li><strong>Навести мышь</strong> на любую переменную — появится подсказка с её значением. Сразу видно: <code>p = 10</code>, <code>T = 0</code>, <code>R = 287</code> — всё ли как ожидалось?</li>
+      <li><strong>Идти дальше</strong> по одной строке.</li>
+    </ul>
+
+    <h3>Шагать по строкам</h3>
+    <table>
+      <tr><th>Клавиша</th><th>Что делает</th></tr>
+      <tr><td><kbd>F10</kbd></td><td>выполнить <strong>одну строку</strong>. Если эта строка вызывает функцию — функция выполнится <strong>целиком</strong>, как «чёрный ящик», и перейдём к следующей</td></tr>
+      <tr><td><kbd>F11</kbd></td><td>выполнить строку, но если это вызов функции — <strong>зайти внутрь</strong> и идти по ней построчно</td></tr>
+      <tr><td><kbd>F5</kbd></td><td>«продолжить»: бежать до следующей точки останова или до конца</td></tr>
+      <tr><td><kbd>Shift</kbd>+<kbd>F5</kbd></td><td>остановить отладку</td></tr>
+    </table>
+
+    <div class="analogy">
+      <div class="box">
+        <div class="label">F10 — с обходом</div>
+        <p>Идёшь по тексту программы построчно, в чужие комнаты не заходишь.</p>
+      </div>
+      <div class="box">
+        <div class="label">F11 — с заходом</div>
+        <p>Если строка говорит «зайди в комнату», заходишь внутрь и идёшь там.</p>
+      </div>
+    </div>
+
+    <p><strong>Когда нужен F11, если F10 быстрее:</strong> когда подозреваешь, что <strong>внутри функции</strong> что-то не так. Например, результат неправильный, а строка <code>m = Calculate(...)</code> выглядит подозрительно — заходишь в <code>Calculate</code> и смотришь, что там творится.</p>
+  </section>
+
+  <!-- ============ 7 ============ -->
+  <section id="s7">
+    <h2><span class="num">7</span>Как всё работает вместе</h2>
+    <ol>
+      <li>Открыл программу — уже выбрана <strong>«Воздух»</strong> (<code>Checked = true</code>). Значит, <code>R = 287</code>.</li>
+      <li>Пользователь вводит давление и температуру через <code>NumericUpDown</code>. <strong>Буквы ввести нельзя</strong> — контрол сам не даёт. За границы выйти тоже нельзя.</li>
+      <li>Нажал «Изменить объём» → <code>ShowDialog()</code> открыл <code>Form2</code> <strong>модально</strong>. Пока окно открыто, главное окно <strong>заморожено</strong>.</li>
+      <li>Ввёл <code>2</code>, нажал OK. <code>Form2</code> закрылась, вернула <code>DialogResult.OK</code>. Главное окно прочитало <code>Volume.Text</code>, превратило в число, сохранило в <code>V = 2</code>.</li>
+      <li>Нажал «Вычислить массу». Программа:
+        <ul>
+          <li>прочитала p и T из полей;</li>
+          <li>посмотрела, какая радиокнопка включена, взяла нужный <code>R</code>;</li>
+          <li>посчитала <code>m</code>;</li>
+          <li>через <code>FormOutStr</code> сделала красиво — 4 знака после запятой;</li>
+          <li>показала в <code>Massa.Text</code>.</li>
+        </ul>
+      </li>
+      <li>Если внутри <code>try</code> что-то упало — программа <strong>не закрылась</strong>, а показала понятное сообщение через <code>MessageBox</code>.</li>
+    </ol>
+  </section>
+
+  <!-- ============ 8 ============ -->
+  <section id="s8">
+    <h2><span class="num">8</span>Вопросы на защите — короткие ответы</h2>
+    <p class="lead">Кликни на вопрос — раскроется ответ. Прогони все перед сдачей.</p>
+
+    <div class="qa-grid">
+      <details class="qa">
+        <summary>Чем RadioButton отличается от CheckBox?</summary>
+        <div class="answer"><p>CheckBox — можно наставить сколько угодно галочек. RadioButton — в одной компании только один включён. У нас газ — один, поэтому RadioButton.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Зачем Panel?</summary>
+        <div class="answer"><p>Это коробка для радиокнопок. Внутри коробки включён только один, а разные коробки друг на друга не влияют. У меня три кнопки газа — в одной коробке, потому что это один вопрос.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Зачем (double) перед Pressure.Value?</summary>
+        <div class="answer"><p><code>Value</code> — тип <code>decimal</code>, а формула на <code>double</code>. Нужно явно превратить одно в другое.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Зачем класс FormOutStr, если есть ToString("F4")?</summary>
+        <div class="answer"><p>Чтобы один раз написать форматирование и использовать везде (переиспользование). Плюс это требование лабы — вынести в отдельный класс.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Что такое модальное окно?</summary>
+        <div class="answer"><p>Окно, которое <strong>блокирует</strong> главное, пока не закроется. Открывается через <code>ShowDialog()</code>. Немодальное — через <code>Show()</code>, оно не блокирует.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Как узнать, нажали ОК или Отмена в дочерней форме?</summary>
+        <div class="answer"><p>По <code>DialogResult</code>. У кнопки ОК стоит <code>DialogResult = OK</code>. После <code>ShowDialog()</code> проверяю <code>if (form.DialogResult == DialogResult.OK)</code>.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Почему поле Volume в Form2 — public?</summary>
+        <div class="answer"><p>Потому что его читает <code>Form1</code> снаружи. По умолчанию поля <code>private</code>, снаружи не видны, поэтому явно сделали <code>public</code>.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Зачем try / catch?</summary>
+        <div class="answer"><p>Чтобы при ошибке (деление на ноль, неверный формат) программа <strong>не падала</strong>, а показала понятное сообщение и <strong>продолжила работу</strong>.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Почему два catch и почему деление на ноль первым?</summary>
+        <div class="answer"><p><code>Exception</code> — родитель всех ошибок, перехватит всё. Ставлю его <strong>последним</strong>, чтобы специфичные ошибки ловились своим обработчиком. От конкретного — к общему.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Что такое точка останова?</summary>
+        <div class="answer"><p>Красный кружок на строке (<kbd>F9</kbd>). Программа останавливается на ней при запуске. Можно навести на переменные и увидеть их значения.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Чем F10 отличается от F11?</summary>
+        <div class="answer"><p><code>F10</code> — следующая строка, функция выполняется целиком как чёрный ящик. <code>F11</code> — тоже шаг, но если это вызов функции — зайти внутрь неё.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Что будет, если T = −273?</summary>
+        <div class="answer"><p>В формуле будет деление на ноль → <code>DivideByZeroException</code> → <code>catch</code> покажет <code>MessageBox</code>, программа продолжит работать.</p></div>
+      </details>
+
+      <details class="qa">
+        <summary>Где хранится объём V?</summary>
+        <div class="answer"><p>В поле <code>private double V</code> в классе <code>Form1</code>. Меняется через кнопку «Изменить объём», читается при расчёте массы.</p></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 9 ============ -->
+  <section id="s9">
+    <h2><span class="num">9</span>Три фразы, которые звучат умно</h2>
+    <p class="lead">Скажи их в нужный момент — препод поймёт, что ты в теме.</p>
+
+    <div class="callout">
+      <div class="ico">1</div>
+      <div class="body">
+        <p>«Мы используем <strong>инкапсуляцию</strong>: логику форматирования спрятали в отдельный класс, чтобы переиспользовать».</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="ico">2</div>
+      <div class="body">
+        <p>«<code>Exception</code> — родитель всех ошибок, поэтому его <code>catch</code> идёт <strong>последним</strong>, чтобы не перехватить специфичные».</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="ico">3</div>
+      <div class="body">
+        <p>«Модальное окно через <code>ShowDialog()</code> <strong>гарантирует</strong>, что мы получим ответ пользователя <strong>до</strong> продолжения работы».</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Лабораторная работа №4 · Ресивер · Теория для сдачи · <span id="date"></span>
+</footer>
+
+<button class="top" id="topBtn" title="Наверх">↑</button>
+
+<style>
+kbd {
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: .85em;
+  background: #eef2f4;
+  border: 1px solid #cdd6dc;
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 1px 7px;
+  color: var(--ink);
+}
+</style>
+
+<script>
+  // Показ кнопки «наверх» при прокрутке
+  const topBtn = document.getElementById('topBtn');
+  window.addEventListener('scroll', () => {
+    topBtn.classList.toggle('show', window.scrollY > 400);
+  });
+  topBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Дата в подвале
+  document.getElementById('date').textContent =
+    new Date().toLocaleDateString('ru-RU', { year: 'numeric', month: 'long' });
+
+  // Открывать Q&A по клику на весь блок, а не только на «стрелочку»
+  document.querySelectorAll('.qa').forEach(qa => {
+    qa.addEventListener('toggle', () => {
+      if (qa.open) {
+        document.querySelectorAll('.qa').forEach(o => {
+          if (o !== qa) o.open = false;
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

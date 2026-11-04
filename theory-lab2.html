@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЛР №2 — Классы, файлы, массивы · Теория</title>
+<style>
+:root {
+  --bg:#f4f6f7; --card:#ffffff; --ink:#2c3e50; --ink-soft:#556570; --muted:#8a9aa5;
+  --accent:#16a085; --accent-2:#1abc9c; --accent-bg:#e8f8f5;
+  --danger:#e74c3c; --danger-bg:#fdedec; --warn:#f39c12; --warn-bg:#fef5e7;
+  --code-bg:#1e2a35; --code-ink:#e8f1f5; --border:#e4eaed;
+  --kw:#c792ea; --str:#a5e075; --cm:#7d8b95; --ty:#82aaff; --num:#f78c6c;
+  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(28,64,80,.06);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+.hero { background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #1abc9c 160%); color: #fff; padding: 64px 24px 56px; text-align: center; }
+.hero .kicker { text-transform: uppercase; letter-spacing: 3px; font-size: 12px; opacity: .7; margin-bottom: 14px; }
+.hero h1 { font-size: 44px; font-weight: 700; margin: 0 0 12px; line-height: 1.1; }
+.hero p { font-size: 17px; opacity: .85; max-width: 620px; margin: 0 auto; }
+.hero .badge { display: inline-block; margin-top: 22px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); padding: 8px 18px; border-radius: 999px; font-size: 13px; letter-spacing: .3px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+.toc { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 30px; margin: -32px auto 40px; position: relative; max-width: 932px; }
+.toc h2 { margin: 0 0 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 600; }
+.toc ol { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 32px; }
+.toc li { margin: 6px 0; break-inside: avoid; }
+.toc a { color: var(--ink); text-decoration: none; font-size: 15px; display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px dashed transparent; transition: .15s; }
+.toc a:hover { color: var(--accent); border-bottom-color: var(--accent-2); }
+.toc .n { color: var(--accent); font-weight: 700; min-width: 22px; }
+section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 36px 40px; margin-bottom: 28px; }
+@media (max-width: 640px) { section { padding: 26px 22px; } .hero h1 { font-size: 32px; } .toc ol { columns: 1; } }
+h2 { font-size: 26px; font-weight: 700; margin: 0 0 8px; color: var(--ink); display: flex; align-items: center; gap: 14px; }
+h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; background: var(--accent-bg); color: var(--accent); font-size: 17px; font-weight: 800; flex-shrink: 0; }
+h3 { font-size: 19px; font-weight: 700; margin: 28px 0 10px; color: var(--ink); }
+h4 { font-size: 15px; font-weight: 700; margin: 20px 0 8px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; }
+p { margin: 10px 0; color: var(--ink); }
+.lead { color: var(--ink-soft); font-size: 17px; margin-bottom: 20px; }
+ul, ol { padding-left: 22px; }
+li { margin: 6px 0; }
+strong { color: var(--ink); }
+code { font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace; font-size: .9em; background: #eef2f4; color: #b1304a; padding: 2px 7px; border-radius: 5px; border: 1px solid #e3e9ec; }
+pre { background: var(--code-bg); color: var(--code-ink); padding: 20px 22px; border-radius: 10px; overflow-x: auto; font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace; font-size: 13.5px; line-height: 1.55; margin: 16px 0; position: relative; border: 1px solid #2c3e50; }
+pre code { background: transparent; color: inherit; padding: 0; border: 0; font-size: inherit; }
+pre .lang { position: absolute; top: 8px; right: 12px; font-size: 10px; color: #7d8b95; letter-spacing: 1.5px; text-transform: uppercase; font-family: "Segoe UI", sans-serif; }
+.kw { color: var(--kw); } .str { color: var(--str); } .cm { color: var(--cm); font-style: italic; }
+.ty { color: var(--ty); } .num { color: var(--num); } .fn { color: #ffcb6b; }
+.callout { display: flex; gap: 14px; padding: 16px 20px; border-radius: 10px; margin: 18px 0; border-left: 4px solid; background: var(--accent-bg); border-color: var(--accent); }
+.callout .ico { font-size: 20px; line-height: 1; flex-shrink: 0; }
+.callout .body { flex: 1; }
+.callout .body p:first-child { margin-top: 0; }
+.callout .body p:last-child { margin-bottom: 0; }
+.callout.warn { background: var(--warn-bg); border-color: var(--warn); }
+.callout.danger { background: var(--danger-bg); border-color: var(--danger); }
+.callout.note { background: #eef2f4; border-color: var(--ink-soft); }
+table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: #f7f9fa; font-weight: 700; color: var(--ink); font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+tr:last-child td { border-bottom: 0; }
+tr:nth-child(even) td { background: #fbfcfd; }
+.analogy { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+.analogy .box { background: #f8fafb; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+.analogy .box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; }
+.analogy .box p { margin: 0; font-size: 14.5px; }
+@media (max-width: 640px) { .analogy { grid-template-columns: 1fr; } }
+.qa-grid { display: grid; gap: 12px; margin-top: 16px; }
+.qa { background: #f8fafb; border: 1px solid var(--border); border-radius: 10px; padding: 0; overflow: hidden; }
+.qa summary { list-style: none; cursor: pointer; padding: 14px 18px; font-weight: 600; color: var(--ink); font-size: 15px; display: flex; align-items: center; gap: 10px; user-select: none; transition: background .15s; }
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::before { content: "?"; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.qa summary:hover { background: #eef4f6; }
+.qa[open] summary { background: var(--accent-bg); }
+.qa .answer { padding: 0 18px 16px 52px; color: var(--ink-soft); font-size: 14.5px; }
+.qa .answer p { margin: 6px 0; }
+footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 0 40px; }
+.top { position: fixed; right: 22px; bottom: 22px; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; border: 0; cursor: pointer; font-size: 18px; box-shadow: 0 6px 20px rgba(22,160,133,.35); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+.top.show { opacity: 1; pointer-events: auto; }
+.top:hover { transform: translateY(-2px); }
+kbd { font-family: "Cascadia Code", Consolas, monospace; font-size: .85em; background: #eef2f4; border: 1px solid #cdd6dc; border-bottom-width: 2px; border-radius: 5px; padding: 1px 7px; color: var(--ink); }
+@media print {
+  body { background: #fff; font-size: 11pt; }
+  .hero { background: #fff !important; color: #000; padding: 20px 0; text-align: left; }
+  .hero h1 { font-size: 26pt; }
+  .hero .badge { display: none; }
+  .toc { box-shadow: none; border: 1px solid #ccc; margin: 10px 0; }
+  section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; margin-bottom: 12px; padding: 16px; }
+  pre { background: #f4f4f4 !important; color: #000 !important; border: 1px solid #ccc; }
+  .kw, .str, .cm, .ty, .num, .fn { color: #000 !important; }
+  .top { display: none; }
+  .qa { border-color: #ccc; }
+  .qa[open] summary, .qa summary { background: #fff !important; }
+  a { color: #000 !important; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Лабораторная работа №2</div>
+  <h1>Классы, форматирование, файлы, массивы</h1>
+  <p>Как разбить программу на классы, красиво вывести числа, сохранить в файл и работать с массивами — простыми словами.</p>
+  <div class="badge">Классы · Конструкторы · Switch · Формат строк · Файлы · Массивы</div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>Содержание</h2>
+    <ol>
+      <li><a href="#s0"><span class="n">0</span>Что мы делали</a></li>
+      <li><a href="#s1"><span class="n">1</span>Классы и объекты</a></li>
+      <li><a href="#s2"><span class="n">2</span>Конструкторы и перегрузка</a></li>
+      <li><a href="#s3"><span class="n">3</span>public и private</a></li>
+      <li><a href="#s4"><span class="n">4</span>Форматирование {0}, {1}</a></li>
+      <li><a href="#s5"><span class="n">5</span>Спецификаторы D, E, F, G, N</a></li>
+      <li><a href="#s6"><span class="n">6</span>Работа с файлами</a></li>
+      <li><a href="#s7"><span class="n">7</span>Массивы (1D и 2D)</a></li>
+      <li><a href="#s8"><span class="n">8</span>Методы System.Array</a></li>
+      <li><a href="#s9"><span class="n">9</span>Switch-case</a></li>
+      <li><a href="#s10"><span class="n">10</span>Класс Gaz — пример</a></li>
+      <li><a href="#s11"><span class="n">11</span>Вопросы на защите</a></li>
+      <li><a href="#s12"><span class="n">12</span>Умные фразы</a></li>
+    </ol>
+  </nav>
+
+  <section id="s0">
+    <h2><span class="num">0</span>Что мы делали</h2>
+    <p class="lead">ЛР №2 — это <strong>следующий шаг</strong> после ЛР №1. Мы учимся делать программу не «одной простынёй», а разбивать на <strong>классы</strong> — маленькие независимые кусочки. И осваиваем новые инструменты: форматирование, файлы, массивы.</p>
+    <table>
+      <tr><th>Что изучили</th><th>Зачем</th></tr>
+      <tr><td>Классы и объекты</td><td>Разбить код на логические части</td></tr>
+      <tr><td>Конструкторы</td><td>Создавать объекты с параметрами</td></tr>
+      <tr><td>Форматирование <code>{0:F2}</code></td><td>Красиво выводить числа</td></tr>
+      <tr><td>StreamWriter / StreamReader</td><td>Сохранять и читать данные в файлы</td></tr>
+      <tr><td>Массивы (1D, 2D)</td><td>Хранить много чисел (например, таблицу)</td></tr>
+      <tr><td>Switch-case</td><td>Выбор по числу (1 — воздух, 2 — азот)</td></tr>
+    </table>
+  </section>
+
+  <section id="s1">
+    <h2><span class="num">1</span>Классы и объекты — что это</h2>
+    <p><strong>Класс</strong> — это <strong>чертёж</strong>. <strong>Объект</strong> — это <strong>вещь, сделанная по чертежу</strong>.</p>
+    <div class="analogy">
+      <div class="box"><div class="label">Класс</div><p>Чертёж автомобиля. На бумаге — какая форма, сколько колёс, что где. Но это <strong>не машина</strong>, на ней нельзя ездить.</p></div>
+      <div class="box"><div class="label">Объект</div><p>Конкретная машина, сделанная по чертежу. Их можно сделать много: красная, синяя — все по одному чертежу.</p></div>
+    </div>
+
+<pre><span class="lang">csharp</span><code><span class="kw">class</span> <span class="ty">Car</span>                     <span class="cm">// ← ЧЕРТЁЖ</span>
+{
+    <span class="kw">public</span> <span class="ty">string</span> Color;         <span class="cm">// что у машины есть</span>
+    <span class="kw">public void</span> <span class="fn">Go</span>() { <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Врум!"</span>); }  <span class="cm">// что умеет</span>
+}
+
+<span class="cm">// Использование:</span>
+<span class="ty">Car</span> myCar = <span class="kw">new</span> <span class="ty">Car</span>();   <span class="cm">// ← ОБЪЕКТ (построили машину)</span>
+myCar.Color = <span class="str">"red"</span>;
+myCar.<span class="fn">Go</span>();                <span class="cm">// Врум!</span></code></pre>
+
+    <h3>Что есть у класса</h3>
+    <table>
+      <tr><th>Название</th><th>Что это</th><th>Аналогия</th></tr>
+      <tr><td><strong>Поле</strong> (member data)</td><td>переменная внутри класса</td><td>цвет машины</td></tr>
+      <tr><td><strong>Метод</strong> (member function)</td><td>функция внутри класса</td><td>«поехали»</td></tr>
+      <tr><td><strong>Конструктор</strong></td><td>функция, которая вызывается при <code>new</code></td><td>сборка машины на заводе</td></tr>
+    </table>
+
+    <h3>Зачем разбивать на классы</h3>
+    <p>Программа из одного метода <code>Main</code> на 200 строк — это кошмар. Легче читать, если каждый класс отвечает за <strong>одну задачу</strong>:</p>
+    <ul>
+      <li><strong>Класс Gaz</strong> — знает всё про газ (расчёт массы);</li>
+      <li><strong>Класс Program</strong> — знает, как запустить и что ввести.</li>
+    </ul>
+    <p>Это называется <strong>разделение ответственности</strong>.</p>
+  </section>
+
+  <section id="s2">
+    <h2><span class="num">2</span>Конструкторы и перегрузка</h2>
+    <p><strong>Конструктор</strong> — это специальный метод, который <strong>автоматически</strong> вызывается при создании объекта через <code>new</code>. Имя конструктора = имя класса.</p>
+
+<pre><span class="lang">csharp</span><code><span class="kw">class</span> <span class="ty">DialogClass</span>
+{
+    <span class="kw">public</span> <span class="ty">string</span> strX, strY;
+
+    <span class="cm">// Конструктор 1 — без параметров («по умолчанию»)</span>
+    <span class="kw">public</span> <span class="fn">DialogClass</span>() { <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Создан пустой"</span>); }
+
+    <span class="cm">// Конструктор 2 — с параметрами</span>
+    <span class="kw">public</span> <span class="fn">DialogClass</span>(<span class="ty">string</span> x, <span class="ty">string</span> y)
+    {
+        strX = x;  strY = y;
+        <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Создан с параметрами"</span>);
+    }
+}</code></pre>
+
+<pre><span class="lang">csharp</span><code><span class="ty">DialogClass</span> d1 = <span class="kw">new</span> <span class="ty">DialogClass</span>();              <span class="cm">// вызовется конструктор 1</span>
+<span class="ty">DialogClass</span> d2 = <span class="kw">new</span> <span class="ty">DialogClass</span>(<span class="str">"John"</span>, <span class="str">"Никита"</span>);   <span class="cm">// вызовется конструктор 2</span></code></pre>
+
+    <h3>Что такое «перегрузка» (overload)</h3>
+    <p>Это когда <strong>у двух методов одно имя, но разные параметры</strong>. Компилятор сам решает, какой вызвать — <strong>по типу и количеству аргументов</strong>.</p>
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body"><p>В примере <code>SayHi()</code> и <code>SayHi(string s)</code> — <strong>перегрузка</strong>. Вызываешь <code>d1.SayHi()</code> — без параметров. Вызываешь <code>d2.SayHi("John")</code> — с параметром. C# разберётся.</p></div>
+    </div>
+
+    <h3>Зачем два конструктора</h3>
+    <ul>
+      <li>Иногда нужно создать «пустой» объект — заполнить поля позже.</li>
+      <li>Иногда удобно сразу передать значения.</li>
+      <li>Оба варианта сосуществуют благодаря <strong>перегрузке</strong>.</li>
+    </ul>
+  </section>
+
+  <section id="s3">
+    <h2><span class="num">3</span>public и private — кто что видит</h2>
+    <p>Каждое поле и метод в классе имеет <strong>уровень доступа</strong>: кто может к нему обращаться.</p>
+    <table>
+      <tr><th>Ключевое слово</th><th>Кто видит</th></tr>
+      <tr><td><code>public</code></td><td><strong>все</strong> — можно из любого места программы</td></tr>
+      <tr><td><code>private</code></td><td>только <strong>внутри своего класса</strong> (по умолчанию, если не указано)</td></tr>
+    </table>
+
+<pre><span class="lang">csharp</span><code><span class="kw">class</span> <span class="ty">Car</span>
+{
+    <span class="kw">public</span> <span class="ty">string</span> Color;      <span class="cm">// снаружи можно: myCar.Color = "red";</span>
+    <span class="kw">private</span> <span class="ty">int</span> enginePower;   <span class="cm">// снаружи НЕЛЬЗЯ: myCar.enginePower — ошибка</span>
+}</code></pre>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body"><p><strong>Правило хорошего тона:</strong> поля обычно делают <code>private</code>, а доступ к ним дают через <strong>свойства</strong> или методы. Но в лабе поля <code>public</code> — так требует задание, для простоты.</p></div>
+    </div>
+
+    <p><strong>Зачем вообще private:</strong> чтобы программист случайно не сломал внутреннее состояние объекта. Класс сам решает, что показывать наружу, а что прятать.</p>
+  </section>
+
+  <section id="s4">
+    <h2><span class="num">4</span>Форматирование строк — {0}, {1}</h2>
+    <p>В C# есть очень удобный способ собрать строку из кусочков:</p>
+
+<pre><span class="lang">csharp</span><code><span class="ty">int</span> age = <span class="num">25</span>;
+<span class="ty">string</span> name = <span class="str">"Иван"</span>;
+<span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Меня зовут {0}, мне {1} лет"</span>, name, age);</code></pre>
+
+    <p>Выведет: <code>Меня зовут Иван, мне 25 лет</code></p>
+
+    <p><strong>Как работает:</strong></p>
+    <ul>
+      <li><code>{0}</code> — вместо него подставляется <strong>первый</strong> аргумент после строки (<code>name</code>);</li>
+      <li><code>{1}</code> — <strong>второй</strong> аргумент (<code>age</code>);</li>
+      <li>и так далее.</li>
+    </ul>
+    <p>Число в скобках — это <strong>номер аргумента</strong>, начиная с 0.</p>
+
+    <div class="callout note">
+      <div class="ico">💡</div>
+      <div class="body"><p>Одно и то же можно делать через <code>+</code>: <code>"Меня зовут " + name + ", мне " + age + " лет"</code>. Но с <code>{0}</code> код <strong>читаемее</strong>, особенно если подстановок много.</p></div>
+    </div>
+
+    <h3>Подстановка в любой порядок</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"{1} моложе, чем {0}"</span>, <span class="num">40</span>, <span class="num">20</span>);
+<span class="cm">// → "20 моложе, чем 40"</span></code></pre>
+    <p>Аргументы <strong>идут по порядку</strong>, а подставляются по номеру в фигурных скобках.</p>
+
+    <h3>Массив в качестве аргументов</h3>
+<pre><span class="lang">csharp</span><code><span class="kw">object</span>[] data = { <span class="str">"Привет"</span>, <span class="num">20.9</span>, <span class="num">1</span>, <span class="str">"ABCD"</span> };
+<span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"{0}, {1}, {3}"</span>, data);
+<span class="cm">// → "Привет, 20.9, ABCD"</span></code></pre>
+    <p>Если вместо отдельного аргумента передать массив — номера в <code>{}</code> указывают на элементы массива.</p>
+  </section>
+
+  <section id="s5">
+    <h2><span class="num">5</span>Спецификаторы формата — D, F, N, E, G</h2>
+    <p>В фигурных скобках можно указать <strong>формат</strong>: <code>{0:F2}</code>, <code>{0:D9}</code> и т.д. После двоеточия — <strong>буква формата</strong> и <strong>сколько знаков</strong>.</p>
+
+    <table>
+      <tr><th>Спецификатор</th><th>Что делает</th><th>Пример</th></tr>
+      <tr><td><code>D</code></td><td>целое с дополнением <strong>нулями слева</strong></td><td><code>"{0:D6}", 42</code> → <code>000042</code></td></tr>
+      <tr><td><code>F</code></td><td>фиксированная точность (сколько знаков после запятой)</td><td><code>"{0:F2}", 3.14159</code> → <code>3.14</code></td></tr>
+      <tr><td><code>E</code></td><td>экспоненциальный вид</td><td><code>"{0:E4}", 12998.7</code> → <code>1.2999E+004</code></td></tr>
+      <tr><td><code>N</code></td><td>«число» — с <strong>разделителями тысяч</strong></td><td><code>"{0:N2}", 1234567.89</code> → <code>1 234 567.89</code></td></tr>
+      <tr><td><code>G</code></td><td>общий — сам решает F или E</td><td><code>"{0:G3}", 1234.5</code> → <code>1.23E+03</code></td></tr>
+    </table>
+
+    <h3>Зачем N</h3>
+    <p><code>N</code> удобно для финансов: <code>1234567.89</code> → <code>1 234 567,89</code> (в русской локали). Пробелы между тысячами — читается легче.</p>
+
+    <h3>Как выбрать</h3>
+    <ul>
+      <li><strong>F</strong> — когда хочешь фиксированное количество знаков после запятой (масса, температура, деньги);</li>
+      <li><strong>N</strong> — когда число большое и хочешь разделители тысяч;</li>
+      <li><strong>D</strong> — для кодов, номеров, где важны нули впереди;</li>
+      <li><strong>E</strong> — для очень больших / маленьких чисел;</li>
+      <li><strong>G</strong> — если не знаешь, что лучше.</li>
+    </ul>
+
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body"><p>Для лабы достаточно <code>F</code> (напр. <code>{0:F2}</code>). Всё остальное — знать, что существует.</p></div>
+    </div>
+  </section>
+
+  <section id="s6">
+    <h2><span class="num">6</span>Работа с файлами — StreamWriter и StreamReader</h2>
+    <p>Иногда вывод программы нужно <strong>сохранить в файл</strong> (например, чтобы открыть в Excel или распечатать). В C# для этого есть <code>StreamWriter</code> и <code>StreamReader</code>.</p>
+
+    <h3>Порядок работы с файлом</h3>
+    <ol>
+      <li><strong>Подключить</strong> <code>using System.IO;</code> — там лежат классы для файлов.</li>
+      <li><strong>Открыть</strong> файл — создать переменную-«ручку».</li>
+      <li><strong>Писать / читать</strong>.</li>
+      <li><strong>Закрыть</strong> файл (обязательно!).</li>
+    </ol>
+
+    <h3>Запись в файл</h3>
+<pre><span class="lang">csharp</span><code><span class="kw">using</span> System.IO;
+
+<span class="ty">StreamWriter</span> f = <span class="kw">new</span> <span class="ty">StreamWriter</span>(<span class="str">"output.txt"</span>);   <span class="cm">// открыли</span>
+f.<span class="fn">WriteLine</span>(<span class="str">"Иван"</span>);                                  <span class="cm">// пишем</span>
+f.<span class="fn">WriteLine</span>(<span class="str">"25"</span>);
+f.<span class="fn">WriteLine</span>(<span class="str">"3.14"</span>);
+f.<span class="fn">Close</span>();                                          <span class="cm">// закрыли</span></code></pre>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body"><p><strong>Обязательно <code>f.Close()</code>.</strong> Если забыть — данные могут не сохраниться: они висят в буфере, пока не закроешь.</p></div>
+    </div>
+
+    <h3>Чтение из файла</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">StreamReader</span> f = <span class="kw">new</span> <span class="ty">StreamReader</span>(<span class="str">"output.txt"</span>);
+<span class="ty">string</span> name = f.<span class="fn">ReadLine</span>();                       <span class="cm">// "Иван"</span>
+<span class="ty">int</span> age    = <span class="ty">Convert</span>.<span class="fn">ToInt32</span>(f.<span class="fn">ReadLine</span>());  <span class="cm">// 25 (строка → число)</span>
+<span class="ty">double</span> pi  = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(f.<span class="fn">ReadLine</span>()); <span class="cm">// 3.14</span>
+f.<span class="fn">Close</span>();</code></pre>
+
+    <p><strong>Важно:</strong> <code>ReadLine</code> читает <strong>строку</strong> — даже если там число. Всегда нужно <code>Convert</code>, если нужен числовой тип.</p>
+
+    <h3>Где лежит файл</h3>
+    <p>По умолчанию — в папке рядом с <strong>.exe</strong>: <code>bin/Debug/output.txt</code>. Чтобы указать точный путь, пиши полностью: <code>"D:\\C#\\input.txt"</code> (двойные слэши — потому что <code>\</code> в строке это escape-символ).</p>
+
+    <div class="callout danger">
+      <div class="ico">✗</div>
+      <div class="body"><p>Если файл не найден — программа <strong>упадёт</strong> с исключением. На ЛР №4 мы это ловим через <code>try/catch</code>. На ЛР №2 достаточно того, что файл точно существует.</p></div>
+    </div>
+  </section>
+
+  <section id="s7">
+    <h2><span class="num">7</span>Массивы — 1D и 2D</h2>
+    <p><strong>Массив</strong> — это <strong>коробка с ячейками</strong>, где каждая ячейка хранит одно значение, и у каждой есть номер (индекс).</p>
+
+    <h3>Одномерный массив (список)</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">int</span>[] numbers = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">5</span>];     <span class="cm">// 5 ячеек: 0, 1, 2, 3, 4</span>
+numbers[<span class="num">0</span>] = <span class="num">100</span>;
+numbers[<span class="num">4</span>] = <span class="num">200</span>;
+<span class="cm">// numbers[5] — ошибка! Индексация с нуля!</span></code></pre>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body"><p><strong>Индексация в C# начинается с 0.</strong> Если массив на 5 элементов, индексы: <code>0, 1, 2, 3, 4</code>. Не <code>1..5</code>. Это классическая ловушка на защите.</p></div>
+    </div>
+
+    <h3>Двумерный массив (таблица)</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">int</span>[,] matrix = <span class="kw">new</span> <span class="ty">int</span>[<span class="num">6</span>, <span class="num">6</span>];     <span class="cm">// 6 строк × 6 столбцов</span>
+matrix[<span class="num">0</span>, <span class="num">0</span>] = <span class="num">5</span>;
+matrix[<span class="num">5</span>, <span class="num">5</span>] = <span class="num">5</span>;</code></pre>
+
+    <h3>Заполнение и вывод</h3>
+<pre><span class="lang">csharp</span><code><span class="cm">// Заполнили все ячейки значением 5</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; <span class="num">6</span>; i++)
+    <span class="kw">for</span> (<span class="ty">int</span> j = <span class="num">0</span>; j &lt; <span class="num">6</span>; j++)
+        matrix[i, j] = <span class="num">5</span>;
+
+<span class="cm">// Вывели на экран</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; <span class="num">6</span>; i++)
+{
+    <span class="kw">for</span> (<span class="ty">int</span> j = <span class="num">0</span>; j &lt; <span class="num">6</span>; j++)
+        <span class="ty">Console</span>.<span class="fn">Write</span>(matrix[i, j] + <span class="str">" "</span>);
+    <span class="ty">Console</span>.<span class="fn">WriteLine</span>();       <span class="cm">// переход на новую строку</span>
+}</code></pre>
+
+    <p>Внутренний цикл выводит одну строку матрицы, внешний после каждой строки делает <code>WriteLine()</code> — чтобы следующая строка была ниже.</p>
+
+    <h3>Значения по умолчанию</h3>
+    <p>При создании массива все ячейки получают <strong>значение по умолчанию</strong>:</p>
+    <ul>
+      <li><code>int</code>, <code>double</code> → <code>0</code>;</li>
+      <li><code>bool</code> → <code>false</code>;</li>
+      <li><code>string</code> → <code>null</code>.</li>
+    </ul>
+  </section>
+
+  <section id="s8">
+    <h2><span class="num">8</span>Методы System.Array</h2>
+    <p>В C# любой массив наследует от класса <code>System.Array</code> — у него есть <strong>готовые полезные методы</strong>. Не надо писать вручную.</p>
+
+    <table>
+      <tr><th>Метод / свойство</th><th>Что делает</th></tr>
+      <tr><td><code>arr.Length</code></td><td>общее количество элементов</td></tr>
+      <tr><td><code>arr.GetLength(0)</code></td><td>размер по первому измерению (для 2D)</td></tr>
+      <tr><td><code>arr.GetLength(1)</code></td><td>размер по второму измерению</td></tr>
+      <tr><td><code>Array.Clear(arr, 0, arr.Length)</code></td><td>обнулить диапазон элементов</td></tr>
+      <tr><td><code>Array.IndexOf(arr, x)</code></td><td>найти первое вхождение <code>x</code></td></tr>
+      <tr><td><code>Array.Reverse(arr)</code></td><td>развернуть массив</td></tr>
+      <tr><td><code>Array.CopyTo(...)</code></td><td>скопировать в другой массив</td></tr>
+      <tr><td><code>arr.GetValue(i)</code> / <code>arr.SetValue(x, i)</code></td><td>получить / установить значение по индексу</td></tr>
+    </table>
+
+    <h3>Контроль границ — важное</h3>
+    <p>Если выйти за пределы массива — C# кинет <strong><code>IndexOutOfRangeException</code></strong>. Это не баг, а защита: программа упадёт сразу, а не будет молча читать мусор.</p>
+
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body"><p>Это <strong>плюс C#</strong> перед C/C++: там выход за границы не ловится и приводит к непредсказуемому поведению. В C# — сразу ошибка.</p></div>
+    </div>
+  </section>
+
+  <section id="s9">
+    <h2><span class="num">9</span>Switch-case — выбор по числу</h2>
+    <p>Когда вариантов много (не 2, а 3-5), удобнее не писать длинную цепочку <code>if/else if</code>, а использовать <code>switch</code>.</p>
+
+<pre><span class="lang">csharp</span><code><span class="ty">int</span> n = <span class="ty">Convert</span>.<span class="fn">ToInt32</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>());
+
+<span class="kw">switch</span> (n)
+{
+    <span class="kw">case</span> <span class="num">1</span>:
+        R = <span class="num">287</span>;  gaz = <span class="str">"воздух"</span>;
+        <span class="kw">break</span>;
+
+    <span class="kw">case</span> <span class="num">2</span>:
+        R = <span class="num">297</span>;  gaz = <span class="str">"азот"</span>;
+        <span class="kw">break</span>;
+
+    <span class="kw">default</span>:                          <span class="cm">// сюда, если ничего не подошло</span>
+        R = <span class="num">287</span>;  gaz = <span class="str">"воздух (по умолчанию)"</span>;
+        <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Неверный выбор, считаю для воздуха"</span>);
+        <span class="kw">break</span>;
+}</code></pre>
+
+    <h3>Ключевые слова</h3>
+    <ul>
+      <li><code>switch (x)</code> — «сравни x с вариантами ниже»;</li>
+      <li><code>case 1:</code> — если x == 1, выполнить этот блок;</li>
+      <li><code>break</code> — <strong>выход из switch</strong>. Без него выполнение «провалится» в следующий case (иногда это нужно, но чаще — баг);</li>
+      <li><code>default</code> — если ни один case не подошёл (аналог <code>else</code>).</li>
+    </ul>
+
+    <h3>Switch vs if-else</h3>
+    <p><code>switch</code> удобнее, когда вариантов <strong>много</strong> и они проверяют <strong>равенство</strong>. Для сложных условий (<code>x &gt; 5 &amp;&amp; x &lt; 10</code>) — <code>if/else</code>.</p>
+  </section>
+
+  <section id="s10">
+    <h2><span class="num">10</span>Класс Gaz — пример из лабы</h2>
+    <p>По заданию 2.2.1 нужно переделать задачу про газ из ЛР №1 в класс <code>Gaz</code>. Вот типичная структура:</p>
+
+<pre><span class="lang">csharp</span><code><span class="kw">class</span> <span class="ty">Gaz</span>
+{
+    <span class="cm">// Константы газовых постоянных</span>
+    <span class="kw">public const float</span> R_Vozd = <span class="num">287</span>;
+    <span class="kw">public const float</span> R_Azot = <span class="num">297</span>;
+
+    <span class="cm">// Поля</span>
+    <span class="kw">public float</span> V, R;
+    <span class="kw">public double</span> p, T, m;
+    <span class="kw">public string</span> GazName;
+
+    <span class="cm">// Конструктор — принимает номер газа</span>
+    <span class="kw">public</span> <span class="fn">Gaz</span>(<span class="ty">int</span> n)
+    {
+        <span class="kw">switch</span> (n)
+        {
+            <span class="kw">case</span> <span class="num">1</span>: R = R_Vozd; GazName = <span class="str">"воздух"</span>; <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="num">2</span>: R = R_Azot; GazName = <span class="str">"азот"</span>;   <span class="kw">break</span>;
+            <span class="kw">default</span>: R = R_Vozd; GazName = <span class="str">"воздух (по умолч.)"</span>;
+                     <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Неверный выбор"</span>); <span class="kw">break</span>;
+        }
+    }
+
+    <span class="cm">// Методы</span>
+    <span class="kw">public void</span> <span class="fn">Set_V</span>() { <span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Объём: "</span>); V = (<span class="ty">float</span>)<span class="ty">Convert</span>.<span class="fn">ToDouble</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>()); }
+    <span class="kw">public void</span> <span class="fn">Set_P</span>() { <span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Давление: "</span>); p = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>()); }
+    <span class="kw">public void</span> <span class="fn">Set_T</span>() { <span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Температура: "</span>); T = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>()); }
+
+    <span class="kw">public void</span> <span class="fn">Calc</span>()
+    {
+        m = (p + <span class="num">1</span>) * <span class="num">98000</span> * V / (R * (T + <span class="num">273</span>));
+    }
+
+    <span class="kw">public void</span> <span class="fn">Show</span>()
+    {
+        <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Газ: {GazName}, масса: {m:F2} кг"</span>);
+    }
+}
+
+<span class="cm">// Использование в Main:</span>
+<span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Выберите газ (1-воздух, 2-азот): "</span>);
+<span class="ty">int</span> n = <span class="ty">Convert</span>.<span class="fn">ToInt32</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>());
+
+<span class="ty">Gaz</span> g = <span class="kw">new</span> <span class="ty">Gaz</span>(n);
+g.<span class="fn">Set_V</span>();  g.<span class="fn">Set_P</span>();  g.<span class="fn">Set_T</span>();
+g.<span class="fn">Calc</span>();
+g.<span class="fn">Show</span>();</code></pre>
+
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body"><p><strong>Разделение ответственности:</strong> класс <code>Gaz</code> знает про газ, класс <code>Program</code> — про запуск. Каждый занимается своим делом.</p></div>
+    </div>
+
+    <h3>Зачем конструктор принимает номер газа</h3>
+    <p>Потому что <code>R</code> и <code>GazName</code> зависят от выбора — их логично задать <strong>сразу при создании</strong>. Пользователь ввёл 1 — объект создан для воздуха; ввёл 2 — для азота.</p>
+  </section>
+
+  <section id="s11">
+    <h2><span class="num">11</span>Вопросы на защите</h2>
+    <div class="qa-grid">
+      <details class="qa"><summary>Что такое класс и объект?</summary><div class="answer"><p><strong>Класс</strong> — чертёж (описание полей и методов). <strong>Объект</strong> — конкретная «вещь», созданная по этому чертежу через <code>new</code>. Один класс — много объектов.</p></div></details>
+      <details class="qa"><summary>Что такое конструктор?</summary><div class="answer"><p>Специальный метод, который <strong>автоматически вызывается при создании объекта</strong>. Имя = имя класса. Может принимать параметры. Если не написать ни одного — C# создаст конструктор по умолчанию сам.</p></div></details>
+      <details class="qa"><summary>Что такое перегрузка?</summary><div class="answer"><p>Несколько методов с <strong>одним именем, но разными параметрами</strong>. Компилятор сам выбирает нужный по типу и количеству аргументов. Пример: <code>SayHi()</code> и <code>SayHi(string)</code>.</p></div></details>
+      <details class="qa"><summary>Чем public отличается от private?</summary><div class="answer"><p><code>public</code> — видно отовсюду. <code>private</code> — только внутри своего класса. По умолчанию все члены класса — <code>private</code>.</p></div></details>
+      <details class="qa"><summary>Что означает {0} в строке формата?</summary><div class="answer"><p>«Подставь сюда <strong>первый</strong> аргумент после строки». <code>{1}</code> — второй. Номера начинаются с 0. Пример: <code>"{0} и {1}", "a", "b"</code> → <code>a и b</code>.</p></div></details>
+      <details class="qa"><summary>Что делает F2 в {0:F2}?</summary><div class="answer"><p>Формат <strong>F</strong> — фиксированная точность. <code>2</code> — два знака после запятой. Пример: <code>"{0:F2}", 3.14159</code> → <code>3.14</code>.</p></div></details>
+      <details class="qa"><summary>Чем N отличается от F?</summary><div class="answer"><p><code>F</code> — просто фиксированное количество знаков после запятой. <code>N</code> — то же, но с <strong>разделителями тысяч</strong>. Пример: <code>N2</code> для <code>1234567.89</code> → <code>1 234 567,89</code>.</p></div></details>
+      <details class="qa"><summary>Зачем using System.IO?</summary><div class="answer"><p>Чтобы пользоваться классами <code>StreamWriter</code>, <code>StreamReader</code>, <code>File</code> и др. — они лежат в пространстве имён <code>System.IO</code>.</p></div></details>
+      <details class="qa"><summary>Зачем f.Close() в конце?</summary><div class="answer"><p>Без него данные могут <strong>не сохраниться</strong>: они висят в буфере. <code>Close()</code> «сбрасывает» буфер на диск и освобождает файл для других программ.</p></div></details>
+      <details class="qa"><summary>С какого индекса начинается массив?</summary><div class="answer"><p><strong>С 0.</strong> Массив на 5 элементов имеет индексы <code>0, 1, 2, 3, 4</code>. Обращение к <code>arr[5]</code> — ошибка <code>IndexOutOfRangeException</code>.</p></div></details>
+      <details class="qa"><summary>Чем отличается arr.Length от arr.GetLength(0)?</summary><div class="answer"><p><code>Length</code> — общее количество элементов (для 1D — размер). <code>GetLength(0)</code> — размер по первому измерению (для 2D — строки). <code>GetLength(1)</code> — столбцы.</p></div></details>
+      <details class="qa"><summary>Зачем break в switch?</summary><div class="answer"><p>«Выйти из switch». Без него выполнение <strong>провалится в следующий case</strong> — иногда это нужно (fall-through), но чаще это баг.</p></div></details>
+      <details class="qa"><summary>Что такое default в switch?</summary><div class="answer"><p>Блок, который выполняется, если <strong>ни один case не подошёл</strong>. Аналог <code>else</code>.</p></div></details>
+      <details class="qa"><summary>Почему в классе Gaz константы — const?</summary><div class="answer"><p><code>const</code> — константа, значение которой нельзя изменить. Газовые постоянные (<code>R_Vozd = 287</code>) не меняются — логично объявить их <code>const</code>, чтобы случайно не перезаписать.</p></div></details>
+      <details class="qa"><summary>Почему R, V, p, T — public?</summary><div class="answer"><p>По заданию лабы их нужно читать и менять из <code>Main</code>. Если бы они были <code>private</code>, программа не скомпилировалась бы: «недоступно из-за уровня защиты».</p></div></details>
+    </div>
+  </section>
+
+  <section id="s12">
+    <h2><span class="num">12</span>Умные фразы для защиты</h2>
+    <div class="callout"><div class="ico">1</div><div class="body"><p>«Класс — это <strong>абстракция</strong>: описание того, что будет общего у всех объектов. Конкретные объекты создаются через <code>new</code> и живут своей жизнью».</p></div></div>
+    <div class="callout"><div class="ico">2</div><div class="body"><p>«Мы используем <strong>перегрузку конструкторов</strong>: можно создать объект как с параметрами, так и без — компилятор сам выберет по аргументам».</p></div></div>
+    <div class="callout"><div class="ico">3</div><div class="body"><p>«Разделение на классы — это <strong>принцип единственной ответственности</strong>: <code>Gaz</code> отвечает за расчёт газа, <code>Program</code> — за запуск. Так код легче тестировать и переиспользовать».</p></div></div>
+    <div class="callout"><div class="ico">4</div><div class="body"><p>«<code>StreamWriter</code> буферизует запись — поэтому обязателен <code>Close</code>, иначе данные останутся в памяти и не попадут в файл».</p></div></div>
+  </section>
+
+</div>
+
+<footer>Лабораторная работа №2 · Классы, файлы, массивы · Теория для сдачи · <span id="date"></span></footer>
+<button class="top" id="topBtn" title="Наверх">↑</button>
+
+<script>
+  const topBtn = document.getElementById('topBtn');
+  window.addEventListener('scroll', () => topBtn.classList.toggle('show', window.scrollY > 400));
+  topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  document.getElementById('date').textContent = new Date().toLocaleDateString('ru-RU', { year: 'numeric', month: 'long' });
+  document.querySelectorAll('.qa').forEach(qa => {
+    qa.addEventListener('toggle', () => {
+      if (qa.open) document.querySelectorAll('.qa').forEach(o => { if (o !== qa) o.open = false; });
+    });
+  });
+</script>
+
+</body>
+</html>

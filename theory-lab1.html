@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЛР №1 — Консольное приложение · Теория</title>
+<style>
+:root {
+  --bg:        #f4f6f7;
+  --card:      #ffffff;
+  --ink:       #2c3e50;
+  --ink-soft:  #556570;
+  --muted:     #8a9aa5;
+  --accent:    #16a085;
+  --accent-2:  #1abc9c;
+  --accent-bg: #e8f8f5;
+  --danger:    #e74c3c;
+  --danger-bg: #fdedec;
+  --warn:      #f39c12;
+  --warn-bg:   #fef5e7;
+  --code-bg:   #1e2a35;
+  --code-ink:  #e8f1f5;
+  --border:    #e4eaed;
+  --kw:        #c792ea;
+  --str:       #a5e075;
+  --cm:        #7d8b95;
+  --ty:        #82aaff;
+  --num:       #f78c6c;
+  --radius:    14px;
+  --shadow:    0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(28,64,80,.06);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+.hero { background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #1abc9c 160%); color: #fff; padding: 64px 24px 56px; text-align: center; }
+.hero .kicker { text-transform: uppercase; letter-spacing: 3px; font-size: 12px; opacity: .7; margin-bottom: 14px; }
+.hero h1 { font-size: 44px; font-weight: 700; margin: 0 0 12px; line-height: 1.1; }
+.hero p { font-size: 17px; opacity: .85; max-width: 620px; margin: 0 auto; }
+.hero .badge { display: inline-block; margin-top: 22px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); padding: 8px 18px; border-radius: 999px; font-size: 13px; letter-spacing: .3px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+.toc { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 30px; margin: -32px auto 40px; position: relative; max-width: 932px; }
+.toc h2 { margin: 0 0 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-weight: 600; }
+.toc ol { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 32px; }
+.toc li { margin: 6px 0; break-inside: avoid; }
+.toc a { color: var(--ink); text-decoration: none; font-size: 15px; display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px dashed transparent; transition: .15s; }
+.toc a:hover { color: var(--accent); border-bottom-color: var(--accent-2); }
+.toc .n { color: var(--accent); font-weight: 700; min-width: 22px; }
+section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 36px 40px; margin-bottom: 28px; }
+@media (max-width: 640px) { section { padding: 26px 22px; } .hero h1 { font-size: 32px; } .toc ol { columns: 1; } }
+h2 { font-size: 26px; font-weight: 700; margin: 0 0 8px; color: var(--ink); display: flex; align-items: center; gap: 14px; }
+h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; background: var(--accent-bg); color: var(--accent); font-size: 17px; font-weight: 800; flex-shrink: 0; }
+h3 { font-size: 19px; font-weight: 700; margin: 28px 0 10px; color: var(--ink); }
+h4 { font-size: 15px; font-weight: 700; margin: 20px 0 8px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; }
+p { margin: 10px 0; color: var(--ink); }
+.lead { color: var(--ink-soft); font-size: 17px; margin-bottom: 20px; }
+ul, ol { padding-left: 22px; }
+li { margin: 6px 0; }
+strong { color: var(--ink); }
+code { font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace; font-size: .9em; background: #eef2f4; color: #b1304a; padding: 2px 7px; border-radius: 5px; border: 1px solid #e3e9ec; }
+pre { background: var(--code-bg); color: var(--code-ink); padding: 20px 22px; border-radius: 10px; overflow-x: auto; font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace; font-size: 13.5px; line-height: 1.55; margin: 16px 0; position: relative; border: 1px solid #2c3e50; }
+pre code { background: transparent; color: inherit; padding: 0; border: 0; font-size: inherit; }
+pre .lang { position: absolute; top: 8px; right: 12px; font-size: 10px; color: #7d8b95; letter-spacing: 1.5px; text-transform: uppercase; font-family: "Segoe UI", sans-serif; }
+.kw { color: var(--kw); }
+.str { color: var(--str); }
+.cm { color: var(--cm); font-style: italic; }
+.ty { color: var(--ty); }
+.num { color: var(--num); }
+.fn { color: #ffcb6b; }
+.callout { display: flex; gap: 14px; padding: 16px 20px; border-radius: 10px; margin: 18px 0; border-left: 4px solid; background: var(--accent-bg); border-color: var(--accent); }
+.callout .ico { font-size: 20px; line-height: 1; flex-shrink: 0; }
+.callout .body { flex: 1; }
+.callout .body p:first-child { margin-top: 0; }
+.callout .body p:last-child { margin-bottom: 0; }
+.callout.warn { background: var(--warn-bg); border-color: var(--warn); }
+.callout.danger { background: var(--danger-bg); border-color: var(--danger); }
+.callout.note { background: #eef2f4; border-color: var(--ink-soft); }
+table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--border); }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: #f7f9fa; font-weight: 700; color: var(--ink); font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+tr:last-child td { border-bottom: 0; }
+tr:nth-child(even) td { background: #fbfcfd; }
+.analogy { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+.analogy .box { background: #f8fafb; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+.analogy .box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; }
+.analogy .box p { margin: 0; font-size: 14.5px; }
+@media (max-width: 640px) { .analogy { grid-template-columns: 1fr; } }
+.qa-grid { display: grid; gap: 12px; margin-top: 16px; }
+.qa { background: #f8fafb; border: 1px solid var(--border); border-radius: 10px; padding: 0; overflow: hidden; }
+.qa summary { list-style: none; cursor: pointer; padding: 14px 18px; font-weight: 600; color: var(--ink); font-size: 15px; display: flex; align-items: center; gap: 10px; user-select: none; transition: background .15s; }
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::before { content: "?"; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.qa summary:hover { background: #eef4f6; }
+.qa[open] summary { background: var(--accent-bg); }
+.qa .answer { padding: 0 18px 16px 52px; color: var(--ink-soft); font-size: 14.5px; }
+.qa .answer p { margin: 6px 0; }
+footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 0 40px; }
+.top { position: fixed; right: 22px; bottom: 22px; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; border: 0; cursor: pointer; font-size: 18px; box-shadow: 0 6px 20px rgba(22,160,133,.35); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+.top.show { opacity: 1; pointer-events: auto; }
+.top:hover { transform: translateY(-2px); }
+kbd { font-family: "Cascadia Code", Consolas, monospace; font-size: .85em; background: #eef2f4; border: 1px solid #cdd6dc; border-bottom-width: 2px; border-radius: 5px; padding: 1px 7px; color: var(--ink); }
+@media print {
+  body { background: #fff; font-size: 11pt; }
+  .hero { background: #fff !important; color: #000; padding: 20px 0; text-align: left; }
+  .hero h1 { font-size: 26pt; }
+  .hero .badge { display: none; }
+  .toc { box-shadow: none; border: 1px solid #ccc; margin: 10px 0; }
+  section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; margin-bottom: 12px; padding: 16px; }
+  pre { background: #f4f4f4 !important; color: #000 !important; border: 1px solid #ccc; }
+  .kw, .str, .cm, .ty, .num, .fn { color: #000 !important; }
+  .top { display: none; }
+  .qa { border-color: #ccc; }
+  .qa[open] summary, .qa summary { background: #fff !important; }
+  a { color: #000 !important; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Лабораторная работа №1</div>
+  <h1>Консольное приложение на C#</h1>
+  <p>Структура проекта, классы, Console, типы данных, форматирование и первые задачи — простыми словами.</p>
+  <div class="badge">Console · namespace · Convert · PadLeft · Math · Циклы</div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>Содержание</h2>
+    <ol>
+      <li><a href="#s0"><span class="n">0</span>Что мы делали</a></li>
+      <li><a href="#s1"><span class="n">1</span>Структура проекта</a></li>
+      <li><a href="#s2"><span class="n">2</span>using, namespace, class</a></li>
+      <li><a href="#s3"><span class="n">3</span>Console: методы ввода-вывода</a></li>
+      <li><a href="#s4"><span class="n">4</span>Сборка и запуск (F6, F5)</a></li>
+      <li><a href="#s5"><span class="n">5</span>Типы данных</a></li>
+      <li><a href="#s6"><span class="n">6</span>Convert — превращение типов</a></li>
+      <li><a href="#s7"><span class="n">7</span>Строковые методы</a></li>
+      <li><a href="#s8"><span class="n">8</span>Math — математика</a></li>
+      <li><a href="#s9"><span class="n">9</span>Примеры задач</a></li>
+      <li><a href="#s10"><span class="n">10</span>Вопросы на защите</a></li>
+      <li><a href="#s11"><span class="n">11</span>Умные фразы</a></li>
+    </ol>
+  </nav>
+
+  <section id="s0">
+    <h2><span class="num">0</span>Что мы делали</h2>
+    <p class="lead">ЛР №1 — это первая программа на C#. Мы создали <strong>консольное приложение</strong>: без кнопок и окон, только текст в чёрном окне и ввод с клавиатуры.</p>
+    <p>Главная цель — понять, как устроена программа на C#, и научиться вводить числа, считать и красиво выводить результат.</p>
+    <table>
+      <tr><th>Задача</th><th>Что тренирует</th></tr>
+      <tr><td>Hello, «Изучаем Си #»</td><td>первая программа, Console.WriteLine</td></tr>
+      <tr><td>Таблица Цельсий → Фаренгейт</td><td>циклы while, for, PadLeft</td></tr>
+      <tr><td>Площадь треугольника (формула Герона)</td><td>ввод чисел, Convert, Math.Sqrt/Pow</td></tr>
+      <tr><td>Масса газа в баллоне</td><td>формула, форматирование с 2 знаками</td></tr>
+    </table>
+  </section>
+
+  <section id="s1">
+    <h2><span class="num">1</span>Структура проекта</h2>
+    <p>Когда создаёшь «Console Application», Visual Studio делает <strong>папку с кучей файлов</strong>. Не все из них ты будешь редактировать — большинство создаётся автоматом.</p>
+    <table>
+      <tr><th>Файл / папка</th><th>Что это</th></tr>
+      <tr><td><code>Имя.sln</code></td><td>«решение» — объединяет один или несколько проектов</td></tr>
+      <tr><td><code>Имя.csproj</code></td><td>файл проекта — список файлов и настроек</td></tr>
+      <tr><td><code>Program.cs</code></td><td><strong>главный файл с кодом</strong> — его ты и редактируешь</td></tr>
+      <tr><td><code>Properties/AssemblyInfo.cs</code></td><td>информация о сборке (версия, автор и т.п.)</td></tr>
+      <tr><td><code>bin/Debug/</code></td><td>здесь после сборки появляется <strong>Имя.exe</strong></td></tr>
+      <tr><td><code>obj/Debug/</code></td><td>временные файлы компиляции</td></tr>
+    </table>
+    <div class="callout">
+      <div class="ico">✓</div>
+      <div class="body"><p>Из всего этого вручную ты правишь <strong>только <code>Program.cs</code></strong>. Остальное — служебное.</p></div>
+    </div>
+  </section>
+
+  <section id="s2">
+    <h2><span class="num">2</span>using, namespace, class — каркас любой программы</h2>
+    <p>Любая программа на C# выглядит примерно так:</p>
+<pre><span class="lang">csharp</span><code><span class="kw">using</span> System;                     <span class="cm">// 1. Подключаем «библиотеку»</span>
+
+<span class="kw">namespace</span> lab1_1                   <span class="cm">// 2. Своё «имя проекта»</span>
+{
+    <span class="kw">class</span> <span class="ty">Program</span>                 <span class="cm">// 3. Класс — контейнер для кода</span>
+    {
+        <span class="kw">static void</span> <span class="fn">Main</span>()          <span class="cm">// 4. Точка входа — с неё всё начинается</span>
+        {
+            <span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Привет!"</span>);
+        }
+    }
+}</code></pre>
+
+    <h3>Что такое using</h3>
+    <p><code>using System;</code> — это «разрешение пользоваться всем, что лежит в библиотеке System». Без него пришлось бы писать <code>System.Console.WriteLine</code> вместо просто <code>Console.WriteLine</code>.</p>
+
+    <h3>Что такое namespace</h3>
+    <p>Это «фамилия» твоего проекта. Представь, что у двух программистов есть класс <code>User</code> — при объединении их проектов возникнет конфликт. Namespace решает проблему: у одного <code>Shop.User</code>, у другого <code>Blog.User</code>.</p>
+
+    <h3>Что такое class</h3>
+    <p>C# — объектно-ориентированный язык. <strong>Вся программа</strong> — это набор классов. Минимум один класс нужен, чтобы было куда положить <code>Main</code>.</p>
+
+    <h3>Что такое Main</h3>
+    <p>Это <strong>точка входа</strong> — первая функция, которую вызывает .NET при запуске .exe. Без неё программа не запустится.</p>
+    <div class="analogy">
+      <div class="box"><div class="label">Main — как дверь</div><p>Программа — как дом. <code>Main</code> — единственная входная дверь. Что бы ты ни написал ещё, .NET заходит только через неё.</p></div>
+      <div class="box"><div class="label">static void</div><p><code>static</code> — метод принадлежит классу (не объекту). <code>void</code> — ничего не возвращает. Для <code>Main</code> это обязательно.</p></div>
+    </div>
+  </section>
+
+  <section id="s3">
+    <h2><span class="num">3</span>Console — ввод и вывод</h2>
+    <p>Класс <code>Console</code> — твой единственный «интерфейс» с пользователем в консольном приложении. У него всего 4 метода, которые ты будешь использовать на 99%:</p>
+    <table>
+      <tr><th>Метод</th><th>Что делает</th></tr>
+      <tr><td><code>Console.WriteLine("текст")</code></td><td>выводит текст <strong>и переходит на новую строку</strong></td></tr>
+      <tr><td><code>Console.Write("текст")</code></td><td>выводит текст <strong>без перехода</strong> (следующий вывод — сразу за ним)</td></tr>
+      <tr><td><code>Console.ReadLine()</code></td><td>читает строку, введённую пользователем, <strong>до нажатия Enter</strong>. Возвращает <code>string</code></td></tr>
+      <tr><td><code>Console.Read()</code></td><td>читает <strong>один символ</strong> (вернёт число — код символа). Используется в конце, чтобы окно «не закрывалось сразу»</td></tr>
+    </table>
+
+    <h3>Зачем Read() в конце</h3>
+    <p>Если не поставить паузу, программа отработает и консольное окно мгновенно закроется — ты не увидишь результат. <code>Console.ReadLine()</code> или <code>Console.Read()</code> в конце = «подожди, пока пользователь нажмёт Enter».</p>
+
+    <h3>Пример диалога</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Как вас зовут? "</span>);
+<span class="ty">string</span> name = <span class="ty">Console</span>.<span class="fn">ReadLine</span>();   <span class="cm">// прочитали строку</span>
+<span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"Привет, "</span> + name);</code></pre>
+  </section>
+
+  <section id="s4">
+    <h2><span class="num">4</span>Сборка и запуск — F6 и F5</h2>
+    <p>Программа на C# — это <strong>текст</strong>. Чтобы компьютер её выполнил, нужно сначала <strong>собрать</strong> (скомпилировать) в <code>.exe</code>, а потом <strong>запустить</strong>.</p>
+    <table>
+      <tr><th>Действие</th><th>Клавиши</th><th>Что происходит</th></tr>
+      <tr><td>Собрать</td><td><kbd>F6</kbd></td><td>компилируется, в окне «Ошибки» видно результат</td></tr>
+      <tr><td>Запустить</td><td><kbd>F5</kbd></td><td>сборка + запуск <strong>с отладчиком</strong> (можно ставить точки останова)</td></tr>
+      <tr><td>Запустить без отладки</td><td><kbd>Ctrl</kbd>+<kbd>F5</kbd></td><td>сборка + запуск <strong>быстрее</strong>, но без отладчика</td></tr>
+    </table>
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body"><p>Часто спрашивают: «Чем отличается F5 от Ctrl+F5?» — «F5 запускает с отладчиком (можно останавливать на точках), Ctrl+F5 — просто запуск, для быстрой проверки».</p></div>
+    </div>
+
+    <h3>Где найти готовый .exe</h3>
+    <p>После сборки файл лежит в <code>bin/Debug/Имя.exe</code>. Его можно запускать двойным кликом — без Visual Studio.</p>
+  </section>
+
+  <section id="s5">
+    <h2><span class="num">5</span>Типы данных — что важно знать</h2>
+    <p>В C# у каждой переменной есть <strong>тип</strong> — от него зависит, какие значения можно хранить и сколько места занимать.</p>
+    <table>
+      <tr><th>Тип</th><th>Что хранит</th><th>Пример</th></tr>
+      <tr><td><code>int</code></td><td>целое число (32 бита)</td><td><code>int age = 20;</code></td></tr>
+      <tr><td><code>long</code></td><td>большое целое (64 бита)</td><td><code>long big = 9_000_000_000;</code></td></tr>
+      <tr><td><code>float</code></td><td>дробное, 7 знаков</td><td><code>float x = 3.14f;</code></td></tr>
+      <tr><td><code>double</code></td><td>дробное, 15–16 знаков</td><td><code>double y = 9.81;</code></td></tr>
+      <tr><td><code>char</code></td><td>один символ</td><td><code>char c = 'A';</code></td></tr>
+      <tr><td><code>string</code></td><td>строка текста</td><td><code>string s = "Привет";</code></td></tr>
+      <tr><td><code>bool</code></td><td>истина/ложь</td><td><code>bool ok = true;</code></td></tr>
+    </table>
+
+    <div class="callout note">
+      <div class="ico">💡</div>
+      <div class="body"><p><strong>float vs double:</strong> <code>double</code> точнее. В обычных расчётах используют <code>double</code>. У <code>float</code> в конце числа пишут <code>f</code> (<code>3.14f</code>), иначе компилятор подумает, что это <code>double</code>.</p></div>
+    </div>
+  </section>
+
+  <section id="s6">
+    <h2><span class="num">6</span>Convert — превращение типов</h2>
+    <p><strong>Проблема:</strong> <code>Console.ReadLine()</code> всегда возвращает <code>string</code>. Даже если пользователь ввёл <code>42</code>, это строка «42», а не число. Складывать строки нельзя — получишь «42» + «8» = «428».</p>
+    <p><strong>Решение:</strong> превратить строку в число через класс <code>Convert</code>.</p>
+
+<pre><span class="lang">csharp</span><code><span class="ty">string</span> s = <span class="ty">Console</span>.<span class="fn">ReadLine</span>();     <span class="cm">// "42" (строка)</span>
+<span class="ty">int</span>    i = <span class="ty">Convert</span>.<span class="fn">ToInt32</span>(s);      <span class="cm">// 42 (целое)</span>
+<span class="ty">double</span> d = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(s);     <span class="cm">// 42.0</span>
+<span class="ty">float</span>  f = <span class="ty">Convert</span>.<span class="fn">ToSingle</span>(s);     <span class="cm">// 42.0f</span></code></pre>
+
+    <p>Часто пишут в одну строку:</p>
+<pre><span class="lang">csharp</span><code><span class="ty">int</span> x = <span class="ty">Convert</span>.<span class="fn">ToInt32</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>());</code></pre>
+
+    <div class="callout warn">
+      <div class="ico">⚠</div>
+      <div class="body"><p>Если пользователь введёт <strong>не число</strong> (например, «abc»), <code>Convert.ToInt32</code> <strong>упадёт с ошибкой</strong>. На ЛР №1 это не страшно — препод знает. На ЛР №4 уже учимся ловить такие ошибки через <code>try/catch</code>.</p></div>
+    </div>
+
+    <h3>Convert vs Parse</h3>
+    <p>Можно и так: <code>int.Parse("42")</code> или <code>double.Parse("3.14")</code>. Оба дают одинаковый результат. Разница — детали, для лабы неважны.</p>
+  </section>
+
+  <section id="s7">
+    <h2><span class="num">7</span>Строковые методы — PadLeft и другие</h2>
+    <p>В задачах на таблицу температур (Цельсий → Фаренгейт) нужно <strong>выровнять столбцы</strong>. Для этого в C# есть методы класса <code>string</code>:</p>
+
+    <table>
+      <tr><th>Метод</th><th>Что делает</th></tr>
+      <tr><td><code>s.Length</code></td><td>длина строки (сколько символов)</td></tr>
+      <tr><td><code>s.IndexOf("x")</code></td><td>номер символа «x» в строке (с нуля). Нет — вернёт −1</td></tr>
+      <tr><td><code>s.Remove(pos, n)</code></td><td>удаляет <code>n</code> символов начиная с позиции <code>pos</code></td></tr>
+      <tr><td><code>s.PadLeft(n)</code></td><td>выравнивает по правому краю, добавляя пробелы слева до длины <code>n</code></td></tr>
+      <tr><td><code>s.PadRight(n)</code></td><td>то же, но пробелы справа</td></tr>
+    </table>
+
+    <h3>PadLeft на примере</h3>
+    <p>Хочешь вывести числа в столбик:</p>
+<pre><span class="lang">text</span><code>5
+100
+-20</code></pre>
+    <p>Без PadLeft — криво. С PadLeft(6) — красиво:</p>
+<pre><span class="lang">text</span><code>     5
+   100
+   -20</code></pre>
+
+<pre><span class="lang">csharp</span><code><span class="ty">double</span> x = <span class="num">5</span>;
+<span class="ty">string</span> s = <span class="ty">Convert</span>.<span class="fn">ToString</span>(x);   <span class="cm">// "5"</span>
+s = s.<span class="fn">PadLeft</span>(<span class="num">6</span>);                 <span class="cm">// "     5"</span>
+<span class="ty">Console</span>.<span class="fn">WriteLine</span>(s);</code></pre>
+
+    <h3>Зачем Convert.ToString</h3>
+    <p><code>PadLeft</code> работает только со <strong>строками</strong>. Число <code>double</code> сначала надо превратить в <code>string</code> — для этого <code>Convert.ToString</code>.</p>
+  </section>
+
+  <section id="s8">
+    <h2><span class="num">8</span>Math — математика</h2>
+    <p>Класс <code>Math</code> содержит все нужные функции. В нём всё статическое — не нужно создавать объект, просто вызывай <code>Math.что-то</code>.</p>
+
+    <table>
+      <tr><th>Метод</th><th>Что делает</th></tr>
+      <tr><td><code>Math.Sqrt(x)</code></td><td>квадратный корень</td></tr>
+      <tr><td><code>Math.Pow(x, y)</code></td><td>x в степени y</td></tr>
+      <tr><td><code>Math.Abs(x)</code></td><td>модуль (убирает минус)</td></tr>
+      <tr><td><code>Math.Round(x, n)</code></td><td>округляет до n знаков</td></tr>
+      <tr><td><code>Math.Min(a, b)</code>, <code>Math.Max(a, b)</code></td><td>минимум / максимум</td></tr>
+    </table>
+
+    <h3>Пример: формула Герона</h3>
+    <p>Площадь треугольника со сторонами a, b, c:</p>
+    <p><code>S = √(p·(p-a)·(p-b)·(p-c))</code>, где <code>p = (a+b+c)/2</code> — полупериметр.</p>
+    <p>Сторона по координатам (x1,y1) и (x2,y2): <code>a = √((x2-x1)² + (y2-y1)²)</code>.</p>
+
+<pre><span class="lang">csharp</span><code><span class="ty">double</span> a = <span class="ty">Math</span>.<span class="fn">Sqrt</span>(<span class="ty">Math</span>.<span class="fn">Pow</span>(x2 - x1, <span class="num">2</span>) + <span class="ty">Math</span>.<span class="fn">Pow</span>(y2 - y1, <span class="num">2</span>));
+<span class="ty">double</span> p = (a + b + c) / <span class="num">2.0</span>;
+<span class="ty">double</span> S = <span class="ty">Math</span>.<span class="fn">Sqrt</span>(p * (p - a) * (p - b) * (p - c));
+<span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">"S = "</span> + S);</code></pre>
+  </section>
+
+  <section id="s9">
+    <h2><span class="num">9</span>Примеры задач — коротко</h2>
+
+    <h3>Таблица температур (while)</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">double</span> lower = <span class="num">-20</span>, upper = <span class="num">100</span>, step = <span class="num">10</span>;
+<span class="ty">double</span> k = <span class="num">9.0</span> / <span class="num">5.0</span>;
+<span class="ty">double</span> c = lower;
+<span class="kw">while</span> (c &lt;= upper)
+{
+    <span class="ty">double</span> f = k * c + <span class="num">32</span>;
+    <span class="ty">string</span> cs = <span class="ty">Convert</span>.<span class="fn">ToString</span>(c).<span class="fn">PadLeft</span>(<span class="num">4</span>);
+    <span class="ty">string</span> fs = <span class="ty">Convert</span>.<span class="fn">ToString</span>(f).<span class="fn">PadLeft</span>(<span class="num">6</span>);
+    <span class="ty">Console</span>.<span class="fn">WriteLine</span>(cs + <span class="str">" °C   "</span> + fs + <span class="str">" °F"</span>);
+    c += step;
+}</code></pre>
+    <p><strong>Что важно:</strong> <code>9.0/5.0</code>, а не <code>9/5</code>! Если написать <code>9/5</code>, это деление целых → результат <code>1</code>, а не <code>1.8</code>.</p>
+
+    <h3>Таблица температур (for)</h3>
+<pre><span class="lang">csharp</span><code><span class="kw">for</span> (<span class="ty">double</span> f = <span class="num">0</span>; f &lt;= <span class="num">451</span>; f += <span class="num">50</span>)
+{
+    <span class="ty">double</span> c = (f - <span class="num">32</span>) * <span class="num">5.0</span> / <span class="num">9.0</span>;
+    <span class="ty">Console</span>.<span class="fn">WriteLine</span>(f.<span class="fn">ToString</span>(<span class="str">"F1"</span>).<span class="fn">PadLeft</span>(<span class="num">6</span>) + <span class="str">" °F   "</span> + c.<span class="fn">ToString</span>(<span class="str">"F1"</span>) + <span class="str">" °C"</span>);
+}</code></pre>
+
+    <h3>Масса газа (задача 1.2.3)</h3>
+<pre><span class="lang">csharp</span><code><span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Давление (ати): "</span>);
+<span class="ty">double</span> p = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>());
+<span class="ty">Console</span>.<span class="fn">Write</span>(<span class="str">"Температура (°C): "</span>);
+<span class="ty">double</span> T = <span class="ty">Convert</span>.<span class="fn">ToDouble</span>(<span class="ty">Console</span>.<span class="fn">ReadLine</span>());
+<span class="ty">double</span> R = <span class="num">287</span>, V = <span class="num">1.0</span>;
+<span class="ty">double</span> m = (p + <span class="num">1</span>) * <span class="num">98000</span> * V / (R * (T + <span class="num">273</span>));
+<span class="ty">Console</span>.<span class="fn">WriteLine</span>(<span class="str">$"Масса: {m:F2} кг"</span>);</code></pre>
+
+    <div class="callout note">
+      <div class="ico">💡</div>
+      <div class="body"><p><code>$"...{m:F2}..."</code> — <strong>интерполяция строк</strong>. Проще, чем <code>"...{0:F2}...", m</code>. Работает с C# 6+. Если VS старый — используй <code>m.ToString("F2")</code>.</p></div>
+    </div>
+  </section>
+
+  <section id="s10">
+    <h2><span class="num">10</span>Вопросы на защите</h2>
+    <div class="qa-grid">
+      <details class="qa"><summary>Что такое точка входа в программу?</summary><div class="answer"><p>Метод <code>Main</code>. С него .NET начинает выполнение. Без него программа не запустится. Обычно <code>static void Main(string[] args)</code> — <code>args</code> это аргументы из командной строки (можно убрать для простоты).</p></div></details>
+      <details class="qa"><summary>Зачем using System в начале?</summary><div class="answer"><p>Чтобы писать <code>Console.WriteLine</code>, а не <code>System.Console.WriteLine</code>. Директива просто сокращает запись — «разреши пользоваться классами из System без полного имени».</p></div></details>
+      <details class="qa"><summary>Что такое namespace?</summary><div class="answer"><p>«Фамилия» проекта. Нужна, чтобы классы из разных сборок не конфликтовали по именам. У тебя namespace — это имя твоего проекта (<code>lab1_1</code>).</p></div></details>
+      <details class="qa"><summary>Чем Write отличается от WriteLine?</summary><div class="answer"><p><code>WriteLine</code> после вывода <strong>переходит на новую строку</strong>. <code>Write</code> — нет, следующий вывод продолжит с той же строки.</p></div></details>
+      <details class="qa"><summary>Почему ReadLine возвращает string, а не число?</summary><div class="answer"><p>Потому что пользователь может ввести <strong>что угодно</strong>. Console не знает, число там или слово. Чтобы превратить в число — используй <code>Convert.ToInt32</code> / <code>ToDouble</code>.</p></div></details>
+      <details class="qa"><summary>Чем F5 отличается от Ctrl+F5?</summary><div class="answer"><p><code>F5</code> — запуск <strong>с отладчиком</strong> (можно ставить точки останова). <code>Ctrl+F5</code> — <strong>без отладчика</strong>, быстрее, для простой проверки.</p></div></details>
+      <details class="qa"><summary>Что делает PadLeft?</summary><div class="answer"><p>Добавляет пробелы <strong>слева</strong> до нужной длины. Используется для выравнивания столбцов таблицы по правому краю. Пример: <code>"5".PadLeft(4)</code> → <code>"   5"</code>.</p></div></details>
+      <details class="qa"><summary>Почему 9.0/5.0, а не 9/5?</summary><div class="answer"><p>Потому что <code>9/5</code> — деление <strong>целых</strong>, результат будет <code>1</code> (целочисленное деление отбрасывает дробь). А <code>9.0/5.0</code> — деление <code>double</code>, результат <code>1.8</code>.</p></div></details>
+      <details class="qa"><summary>Что делает Math.Sqrt? Math.Pow?</summary><div class="answer"><p><code>Math.Sqrt(x)</code> — корень квадратный из x. <code>Math.Pow(x, y)</code> — x в степени y. Обе — из класса <code>Math</code>, писать <code>Math.</code> обязательно.</p></div></details>
+      <details class="qa"><summary>Чем int отличается от double?</summary><div class="answer"><p><code>int</code> — только целые числа (32 бита). <code>double</code> — дробные числа, 15–16 значащих цифр. Для температуры, площади, массы — <code>double</code>; для возраста, счётчиков — <code>int</code>.</p></div></details>
+      <details class="qa"><summary>Где лежит готовый .exe?</summary><div class="answer"><p>В папке проекта: <code>bin/Debug/Имя.exe</code>. Появляется после сборки (F6 или F5).</p></div></details>
+      <details class="qa"><summary>Зачем Console.ReadLine() в конце программы?</summary><div class="answer"><p>Чтобы окно консоли <strong>не закрылось сразу</strong> после вывода. Программа «ждёт» нажатия Enter — ты успеваешь прочитать результат.</p></div></details>
+    </div>
+  </section>
+
+  <section id="s11">
+    <h2><span class="num">11</span>Умные фразы для защиты</h2>
+    <div class="callout"><div class="ico">1</div><div class="body"><p>«<code>Main</code> — <strong>единственная точка входа</strong>. Вся программа так или иначе вызывается из него».</p></div></div>
+    <div class="callout"><div class="ico">2</div><div class="body"><p>«<code>using System</code> — это <strong>не подключение библиотеки</strong>, а <strong>сокращение имени</strong>. Библиотека и так доступна, директива просто убирает <code>System.</code> перед каждым вызовом».</p></div></div>
+    <div class="callout"><div class="ico">3</div><div class="body"><p>«<code>Convert</code> — это <strong>явное приведение типов</strong> с обработкой формата. Если ввести не число — будет исключение, которое на следующих лабах мы ловим через <code>try/catch</code>».</p></div></div>
+  </section>
+
+</div>
+
+<footer>Лабораторная работа №1 · Консольное приложение · Теория для сдачи · <span id="date"></span></footer>
+<button class="top" id="topBtn" title="Наверх">↑</button>
+
+<script>
+  const topBtn = document.getElementById('topBtn');
+  window.addEventListener('scroll', () => topBtn.classList.toggle('show', window.scrollY > 400));
+  topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  document.getElementById('date').textContent = new Date().toLocaleDateString('ru-RU', { year: 'numeric', month: 'long' });
+  document.querySelectorAll('.qa').forEach(qa => {
+    qa.addEventListener('toggle', () => {
+      if (qa.open) document.querySelectorAll('.qa').forEach(o => { if (o !== qa) o.open = false; });
+    });
+  });
+</script>
+
+</body>
+</html>
