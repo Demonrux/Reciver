@@ -1,0 +1,64 @@
+# ============ Visual Studio / .NET ============
+# Служебные папки сборки
+[Bb]in/
+[Oo]bj/
+
+# Пользовательские настройки решения и проекта
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# ReSharper / Rider / VS-расширения
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.idea/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Тестовые и временные файлы
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.log
+*.tmp
+
+*.pdb
+*.cache
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp_proj
+*.vspscc
+*.vssscc
+*.svclog
+*.sbr
+*.svc
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
